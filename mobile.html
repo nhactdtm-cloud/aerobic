@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="icon" href="img_cover/logo.jpg">
+<title>Spotify Pro Max</title>
+
+<style>
+/* CẤU TRÚC NỀN TẢNG */
+body { 
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  background: #FDFBF7; /* THAY ĐỔI: Đổi sang Nền trắng kem vỏ trứng cho dịu mắt */
+  color: #212121;  /* THAY ĐỔI: Đổi sang chữ đen chì */
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* THANH ĐẦU TRANG GỌN GÀNG */
+.top-header {
+  background: #1E4233; /* THAY ĐỔI: Chuyển sang màu xanh rêu đậm sang trọng */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  border-bottom: 1px solid rgba(253, 251, 247, 0.1); /* THAY ĐỔI: Đường viền mỏng mờ */
+  color: #FDFBF7; /* THAY ĐỔI: Chữ trên header màu sáng để nổi bật trên nền xanh */
+}
+
+.brand-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.brand-box h2 {
+  font-size: 15px;
+  margin: 0;
+  font-weight: bold;
+  color: #FDFBF7; /* Đảm bảo tên thương hiệu hiển thị rõ */
+}
+
+
+/* VÙNG CUỘN CHÍNH */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.content-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+  padding-bottom: 180px; 
+}
+
+/* DANH SÁCH ALBUM HÀNG NGANG */
+.sidebar {
+  width: 100%;
+  background: transparent;
+  padding: 0;
+  margin-bottom: 5px;
+}
+
+#albumList {
+  display: flex;
+  flex-direction: row; 
+  gap: 10px;
+  overflow-x: auto; 
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding-bottom: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+#albumList::-webkit-scrollbar {
+  display: none;
+}
+
+/* THỂ ALBUM THEO PHONG CÁCH VIÊN THUỐC DI ĐỘNG */
+.album {
+  display: inline-flex; 
+  align-items: center;
+  padding: 10px 18px;
+  background: #FFFFFF; /* THAY ĐỔI: Viên thuốc album mặc định màu trắng tinh nổi trên nền kem */
+  color: #212121; /* THAY ĐỔI: Chữ đen chì */
+  border-radius: 20px; 
+  font-size: 13px;
+  text-align: center;
+  border: 1px solid rgba(30, 66, 51, 0.15); /* THAY ĐỔI: Viền màu xanh rêu nhạt */
+  font-weight: bold;
+  transition: all 0.2s ease;
+  flex-shrink: 0; 
+  cursor: pointer;
+}
+
+.album:active, .album.active {
+  background: #1E4233 !important; /* THAY ĐỔI: Khi chọn, album biến thành màu Xanh rêu đậm */
+  color: #FDFBF7 !important;     /* THAY ĐỔI: Chữ chuyển sang màu kem để tương phản */
+  border-color: #1E4233 !important;
+}
+
+/* HIỆU ỨNG THẢ XUỐNG CHO DANH SÁCH BÀI HÁT */
+#songList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 15px;
+  max-height: 0; 
+  overflow: hidden; 
+  opacity: 0;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease; 
+}
+
+#songList.show {
+  max-height: 2000px; 
+  opacity: 1;
+}
+
+.song {
+  padding: 14px;
+  background: #FFFFFF; /* THAY ĐỔI: Khối bài hát màu trắng tinh sạch sẽ */
+  color: #212121; /* THAY ĐỔI: Chữ đen chì */
+  border-radius: 8px;
+  font-size: 14px;
+  border: 1px solid rgba(30, 66, 51, 0.08); /* THAY ĐỔI: Viền xanh rêu siêu mờ */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  animation: fadeInSong 0.3s ease forwards; 
+}
+
+@keyframes fadeInSong {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.song:active, .song.active {
+  background: #C84B31 !important; /* THAY ĐỔI: Khi bài hát được chọn/chạm chuyển sang màu Đỏ gạch */
+  color: #FFFFFF !important;     /* THAY ĐỔI: Chữ chuyển hẳn sang trắng */
+}
+
+/* PLAYER CỐ ĐỊNH PHÍA DƯỚI */
+.player {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: rgba(253, 251, 247, 0.96); /* THAY ĐỔI: Nền Player màu kem mờ tạo hiệu ứng mượt mà */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 -4px 20px rgba(30, 66, 51, 0.08); /* THAY ĐỔI: Đổ bóng mờ nhẹ màu xanh rêu tránh bị tối đen */
+  border-top: 1px solid rgba(30, 66, 51, 0.1); /* THAY ĐỔI: Viền trên màu xanh rêu nhạt mảnh */
+  touch-action: none;
+}
+
+.cover {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  margin: 0 auto;
+  object-fit: cover;
+  display: block;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* THÊM: Đổ bóng nhẹ cho đĩa nhạc nổi lên nền sáng */
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.controls button {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: none;
+  background: #1E4233; /* THAY ĐỔI: Nút tròn điều khiển nhạc màu Xanh rêu đậm bọc lấy icon */
+  color: #FFFFFF; /* THAY ĐỔI: Biểu tượng (Play/Pause) màu trắng bên trong */
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.controls button:active {
+  background: #C84B31; /* THAY ĐỔI: Khi bấm giữ nút điều khiển sẽ nháy đỏ gạch phản hồi */
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+#time {
+  font-size: 11px;
+  color: #555555; /* THAY ĐỔI: Đổi sang xám đậm dễ đọc trên nền sáng */
+  min-width: 30px;
+}
+
+#seek {
+  flex: 1;
+  accent-color: #C84B31; /* THAY ĐỔI: Thanh kéo thời gian phát nhạc chạy màu Đỏ gạch cực đẹp */
+}
+
+#songTitle {
+  width: 100%;
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+  color: #212121; /* THAY ĐỔI: Tên bài hát phát ở player màu đen chì */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#volume {
+  display: none;
+}
+
+/* TEMPO BOX (KHU VỰC TỐC ĐỘ) */
+#tempoBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 6px;
+}
+
+.tempo {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+  white-space: nowrap;
+  color: #000000; /* THAY ĐỔI: Chữ màu đen chì */
+  padding: 4px 0;
+}
+
+.tempo.active {
+  background: #C84B31; /* THAY ĐỔI: Nút tempo được chọn phủ màu đỏ gạch */
+  color: #FFFFFF; /* THAY ĐỔI: Chữ chuyển trắng */
+  transform: scale(1.05);
+  border-radius: 14px;
+}
+
+/* trái + phải */
+.tempo.side {
+  opacity: 1;
+}
+
+/* ERROR POPUP */
+#speedError {
+  position: fixed;
+  top: 30%; 
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 10000;
+  
+  font-size: 12px; 
+  padding: 10px 16px; 
+  width: auto;
+  max-width: 250px; 
+  
+  /* THAY ĐỔI: Hộp thông báo nền trắng tinh sang trọng, viền xanh mờ */
+  background: rgba(255, 255, 255, 0.98); 
+  border: 1px solid rgba(30, 66, 51, 0.15);
+  color: #212121; /* Chữ thông báo màu đen chì */
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(30, 66, 51, 0.12);
+}
+
+.song-item-title{
+    font-size:14px;
+    font-weight:500;
+    color:#212121 !important;
+}
+
+.song-item-artist{
+    color:#555555 !important;
+}
+
+/* Khi dòng bài hát được active, ép chữ tiêu đề bên trong sang màu trắng */
+.song.active .song-item-title {
+  color: #FFFFFF !important;
+}
+
+.song-item-artist {
+  font-size: 12px;
+  color: #555555; /* THAY ĐỔI: Tên ca sĩ mặc định màu xám đậm */
+  margin-top: 2px;
+  line-height: 1.2;
+}
+
+/* Khi dòng bài hát được active, ép chữ ca sĩ bên trong sang màu trắng mờ */
+.song.active .song-item-artist {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+#userBtn{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  background:#FDFBF7;
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
+}
+
+#userAvatar{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+#userName{
+  font-size:12px;
+  font-weight:bold;
+  color:#212121;
+}
+
+.user-box{
+  position:relative;
+}
+
+#userBtn{
+  width:40px;
+  height:40px;
+  padding:0;
+  border:none;
+  background:none;
+  cursor:pointer;
+}
+
+#userAvatar{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+.user-menu{
+  display:none;
+  position:absolute;
+  top:48px;
+  right:0;
+  width:220px;
+  background:#fff;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 12px 35px rgba(0,0,0,.15);
+  border:1px solid #eee;
+  z-index:999;
+}
+
+.user-menu.show{
+  display:block;
+  animation:menuFade .2s ease;
+}
+
+@keyframes menuFade{
+  from{
+    opacity:0;
+    transform:translateY(-8px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.user-name{
+  padding:16px;
+  font-size:15px;
+  font-weight:700;
+  color:#222;
+  cursor:pointer;
+  border-bottom:1px solid #eee;
+  background:linear-gradient(135deg,#FFF7F0,#FDFBF7);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.user-name:hover{
+  background:linear-gradient(135deg,#FFE9D6,#FFF7F0);
+}
+
+.user-menu button{
+  width:100%;
+  border:none;
+  background:none;
+  padding:12px 16px;
+  font-size:14px;
+  color:#333;
+  text-align:left;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.user-menu button:hover{
+  background:#F5F5F5;
+  padding-left:22px;
+}
+
+.user-menu button:not(:last-child){
+  border-bottom:1px solid #f2f2f2;
+}
+
+/* ===== AUTH BUTTON MOBILE STYLE ===== */
+.auth-group {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-shrink: 0;
+  max-width: 45vw; /* chặn tràn màn hình */
+  justify-content: flex-end;
+}
+
+.auth-btn {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  white-space: nowrap;
+}
+
+/* LOGIN - dạng trong suốt (xịn kiểu app) */
+#loginBtn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.35);
+  color: #fff;
+}
+
+#loginBtn:active {
+  transform: scale(0.95);
+  background: rgba(255,255,255,0.1);
+}
+
+/* REGISTER - nổi bật */
+#registerBtn {
+  background: #1db954;
+  border: none;
+  color: #000;
+  box-shadow: 0 4px 10px rgba(29,185,84,0.25);
+}
+
+#registerBtn:active {
+  transform: scale(0.95);
+  filter: brightness(0.9);
+}
+
+#btnLoadPublicPlaylists{
+  width:100%;
+  padding:12px 18px;
+  margin-bottom:14px;
+
+  background:linear-gradient(135deg,#1E4233,#2E5C49);
+  color:#FDFBF7;
+
+  border:none;
+  border-radius:999px;
+
+  font-size:14px;
+  font-weight:700;
+
+  box-shadow:0 6px 18px rgba(30,66,51,.25);
+  transition:.25s;
+}
+
+#btnLoadPublicPlaylists:hover{
+  transform:translateY(-2px);
+}
+
+#btnLoadPublicPlaylists:active{
+  transform:scale(.97);
+}
+
+#btnLoadPublicPlaylists::before{
+  content:"🌍 ";
+}
+
+#publicPlaylists {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding-bottom: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+#publicPlaylists::-webkit-scrollbar {
+  display: none;
+}
+/* mobile tối ưu */
+@media (max-width: 600px) {
+  .auth-btn {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg" id="bg"></div>
+
+<!-- TOP HEADER -->
+<div class="top-header">
+  <div class="brand-box">
+    <img src="img_cover/logo.jpg" class="logo-box">
+    <h2 id="albumTitle">Nhạc Thể Dục Thẩm Mỹ : Aerobic</h2>
+  </div>
+  <div class="user-box">
+
+<div class="auth-group">
+  <button id="loginBtn" class="auth-btn" onclick="handleLoginClick()">Đăng nhập</button>
+  <button id="registerBtn" class="auth-btn" onclick="handleRegisterClick()">Tạo tài khoản</button>
+</div>
+
+  <button id="userBtn" onclick="toggleUserMenu()">
+    <img id="userAvatar" src="data/avata/avata.png">
+  </button>
+
+<div class="user-menu" id="userMenu">
+
+  <div class="user-name" id="userNameLabel" onclick="goProfile()">
+    👋 Người dùng
+  </div>
+  <button onclick="goSettings()">💌 Liên hệ</button>
+  <button onclick="logout()">🚪 Đăng xuất</button>
+
+</div>
+</div>
+</div>
+
+<!-- MAIN CONTAINER -->
+<div class="main">
+  <div class="content-scroll">
+    
+    <!-- SIDEBAR CHỨA DANH SÁCH ALBUM HÀNG NGANG TRƯỢT MƯỢT -->
+<div class="sidebar">
+
+  <!-- NÚT MỚI -->
+  <button id="btnLoadPublicPlaylists">
+  Bộ sưu tập công khai
+</button>
+
+  <div id="albumList"></div>
+  <div id="publicPlaylists" style="display:none;"></div>
+
+</div>
+
+    <!-- DANH SÁCH BÀI HÁT PHÍA DƯỚI - TỰ ĐỘNG THẢ TRƯỢT XUỐNG KHI CHỌN ALBUM -->
+    <div id="songList"></div>
+
+  </div>
+</div>
+
+<!-- PLAYER -->
+<!-- PLAYER THEO PHONG CÁCH SPOTIFY MOBILE (ĐÃ SỬA LỖI TEMPO) -->
+<div class="player" id="fixedPlayer" style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999; background: #121212; padding: 10px 16px 14px 16px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); border-top: 1px solid #282828; touch-action: none;">
+  
+  <!-- HÀNG CHÍNH: CHỨA COVER, TÊN BÀI HÁT VÀ NÚT PLAY -->
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%;">
+    <img id="cover" class="cover" style="width: 42px; height: 42px; border-radius: 4px; object-fit: cover; flex-shrink: 0;">
+    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start;">
+  <div id="songTitle" style="text-align: left; font-size: 13px; font-weight: bold; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0; width: 100%;">Chưa chọn bài</div>
+  <div id="songArtist" style="text-align: left; font-size: 11px; color: #aaa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 2px 0 0 0; width: 100%;">Tên nghệ sĩ</div>
+</div>
+
+    <div class="controls" style="display: flex; align-items: center; flex-shrink: 0;">
+      <button id="playBtn" onclick="toggle()" style="width: 36px; height: 36px; border-radius: 50%; border: none; background: #fff; color: #000; font-size: 14px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; padding-left: 2px;">▶</button>
+    </div>
+  </div>
+  
+  <!-- HÀNG THỨ 2: THANH TIẾN TRÌNH NHỎ GỌN -->
+  <div class="progress" style="display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 2px;">
+    <div id="time" style="font-size: 10px; color: #a7a7a7; min-width: 28px; text-align: left;">0:00</div>
+    <input type="range" id="seek" min="0" max="100" value="0" oninput="seekAudio()" style="flex: 1; height: 3px; accent-color: #1db954; cursor: pointer; margin: 0;">
+  </div>
+
+  <!-- HÀNG THỨ 3: BỘ CHỌN TEMPO ĐÃ SỬA LỖI ĐỒNG BỘ CHIỀU CAO -->
+  <div style="display: flex; justify-content: center; align-items: center; width: 100%; margin-top: 4px;">
+    <div class="tempo-picker-container"
+    style="position: relative;
+         width: 320px;
+         max-width: 90vw;
+         height: 20px;
+         background: #282828;
+         border-radius: 16px;
+         overflow: visible;
+         border: 1px solid #333;">
+      
+      
+      <!-- Lõi cuộn tempo Box -->
+      <div id="tempoBox">
+  <div class="tempo side" id="t1">120 BPM</div>
+  <div class="tempo active" id="t2">140 BPM</div>
+  <div class="tempo side" id="t3">160 BPM</div>
+</div>
+
+  <!-- CÁC THÀNH PHẦN KHÔNG HIỂN THỊ -->
+  <div class="error" id="speedError" style="display:none;">Bạn cần đăng nhập để thay đổi TEMPO</div>
+  <input type="range" id="volume" min="0" max="1" step="0.01" value="1" oninput="changeVolume()" style="display: none;">
+  <audio id="audio"></audio>
+</div>
+
+<!-- LƯU Ý: Thêm đoạn CSS này vào thẻ <style> trên đầu trang của bạn để ẩn thanh cuộn triệt để -->
+<style>
+#tempoBox::-webkit-scrollbar, .clean-scroll::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+#tempoBox {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style>
+
+<!-- ĐOẠN JAVASCRIPT CẬP NHẬT (Thay thế đoạn xử lý tempo cũ ở cuối file của bạn) -->
+<script>
+const tBox = document.getElementById('tempoBox');
+let tTimeout;
+
+
+// Thiết lập đưa số 140 (ở giữa) vào đúng vị trí tiêu điểm khi tải trang
+function initTempoPosition() {
+  const activeT = tBox.querySelector('.tempo.active');
+  if (activeT) {
+    tBox.scrollTop = activeT.offsetTop;
+  }
+}
+// Chạy khởi tạo sau khi giao diện đã render xong
+setTimeout(initTempoPosition, 400);
+
+// Mở khóa sự kiện cuộn riêng cho tempoBox
+tBox.addEventListener('wheel', function(e) { e.stopPropagation(); }, { passive: true });
+tBox.addEventListener('touchmove', function(e) { e.stopPropagation(); }, { passive: true });
+
+// Lắng nghe sự kiện cuộn
+tBox.addEventListener('scroll', function() {
+  clearTimeout(tTimeout);
+  tTimeout = setTimeout(updateTempoSelection, 100); // Giảm độ trễ xuống 100ms cho nhạy hơn
+});
+
+function goProfile(){
+  const username = localStorage.getItem("username");
+
+  if(!username){
+    window.location.href = "login.html";
+    return;
+  }
+
+  window.location.href = "profile.html?user=" + encodeURIComponent(username);
+}
+
+function toggleUserMenu(){
+  document
+    .getElementById("userMenu")
+    .classList.toggle("show");
+}
+
+
+function updateTempoSelection() {
+  // Tính toán điểm trung tâm thực tế dựa trên chiều cao cố định mới (32px)
+  const boxCenter = tBox.scrollTop + (tBox.clientHeight / 2);
+  let closestElement = null;
+  let minDistance = Infinity;
+  const allTempos = tBox.querySelectorAll('.tempo');
+
+  allTempos.forEach(t => {
+    const elementCenter = t.offsetTop + (t.clientHeight / 2);
+    const distance = Math.abs(boxCenter - elementCenter);
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestElement = t;
+    }
+  });
+
+  if (closestElement && !closestElement.classList.contains('active')) {
+    allTempos.forEach(t => {
+      t.classList.remove('active');
+      t.style.color = '#666';
+      t.style.fontSize = '11px';
+      t.style.fontWeight = 'bold';
+    });
+    
+    // Kích hoạt giao diện phần tử mới được chọn
+    closestElement.classList.add('active');
+    closestElement.style.color = '#1db954';
+    closestElement.style.fontSize = '13px';
+    closestElement.style.fontWeight = '900';
+    
+    // Gọi lệnh click() để kích hoạt code xử lý tăng/giảm tốc độ trong file music.js
+    closestElement.click();
+    console.log("TEMPO nhận diện chính xác:", closestElement.innerText);
+  }
+}
+
+function bindPublicPlaylistButton() {
+  const btn = document.getElementById("btnLoadPublicPlaylists");
+  const albumList = document.getElementById("albumList");
+  const publicBox = document.getElementById("publicPlaylists");
+
+  if (!btn || !albumList || !publicBox) return;
+
+  btn.addEventListener("click", async () => {
+
+if (publicBox.style.display === "flex") {
+  publicBox.style.display = "none";
+  albumList.style.display = "flex";
+
+  const firstAlbum = albumList.querySelector(".album");
+
+  if (firstAlbum) {
+    setTimeout(() => {
+      console.log("🎯 OPEN FIRST ALBUM AFTER BACK");
+      firstAlbum.click();
+    }, 300);
+  }
+
+  return;
+}
+
+    // Ẩn album cá nhân
+    albumList.style.display = "none";
+
+    // Hiện BST công khai
+    publicBox.style.display = "flex";
+    publicBox.innerHTML = "⏳ Đang tải public playlists...";
+
+    try {
+      const res = await fetch(GAS_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "getPublicPlaylists"
+        })
+      });
+
+      const data = await res.json();
+
+const pinnedList = await fetchPinned();
+
+console.log("PINNED =", pinnedList);
+console.log("PUBLIC PLAYLISTS =", data);
+
+publicBox.innerHTML = "";
+
+data.sort((a, b) => {
+
+  const aKey = (a.username || "") + "_" + (a.playlistName || "");
+  const bKey = (b.username || "") + "_" + (b.playlistName || "");
+
+  const aIndex = pinnedList.indexOf(aKey);
+  const bIndex = pinnedList.indexOf(bKey);
+
+  const aPinned = aIndex !== -1;
+  const bPinned = bIndex !== -1;
+
+  // Cả hai đều ghim
+  if (aPinned && bPinned) {
+    return bIndex - aIndex;
+  }
+
+  // Playlist ghim luôn nằm trên
+  if (aPinned) return -1;
+  if (bPinned) return 1;
+
+  return 0;
+});
+
+console.log("PINNED ORDER =", pinnedList);
+
+data.forEach(item => {
+
+  const name = item.playlistName || item.name || "Không tên";
+  const user = item.username || "";
+
+  const playlistKey = user + "_" + name;
+  const isPinned = pinnedList.includes(playlistKey);
+
+  const div = document.createElement("div");
+  div.className = "album public-playlist";
+
+  div.dataset.playlist = name;
+div.dataset.username = user;
+
+  div.innerHTML = `
+    <div style="display:flex;flex-direction:column;">
+      <b>${isPinned ? "📌 " : ""}${name}</b>
+      <span style="
+        font-size:11px;
+        color:#666;
+        margin-top:2px;
+        font-weight:normal;
+      ">${user}</span>
+      <small style="display:none;">${user}</small>
+    </div>
+  `;
+
+  publicBox.appendChild(div);
+});
+
+      const firstPublic =
+  publicBox.querySelector(".public-playlist");
+
+if (firstPublic) {
+
+  setTimeout(() => {
+
+    console.log("🎯 AUTO OPEN PUBLIC");
+
+    firstPublic.click();
+
+  }, 300);
+
+}
+
+    } catch (err) {
+      console.error(err);
+      publicBox.innerHTML = "❌ Lỗi tải public playlists";
+    }
+  });
+}
+
+async function fetchPinned() {
+
+  const userId = localStorage.getItem("username");
+
+  if (!userId) return [];
+
+  try {
+
+    const res = await fetch(GAS_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "getPinnedPlaylists",
+        userId: userId
+      })
+    });
+
+    const data = await res.json();
+
+    return Array.isArray(data)
+      ? data.map(x => Array.isArray(x) ? x[0] : x)
+      : [];
+
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+}
+
+
+function showMyAlbums() {
+  document.getElementById("albumList").style.display = "flex";
+  document.getElementById("publicPlaylists").style.display = "none";
+}
+
+// ==========================================
+// 1. ĐỒNG BỘ LOGIC CLICK PUBLIC PLAYLIST THEO CHUẨN CỦA HỆ THỐNG
+// ==========================================
+document.addEventListener("click", async function (e) {
+  // Tìm thẻ playlist công khai bị click
+  const playlist = e.target.closest(".public-playlist");
+  if (!playlist) return;
+
+  // Bóc tách chính xác dữ liệu dựa trên cấu trúc HTML của bindPublicPlaylistButton
+  const username = playlist.querySelector("small")?.innerText || "";
+  let playlistName = playlist.querySelector("b")?.textContent || "";
+
+playlistName = playlistName
+  .replace(/[📌📍🌍]/g, "")
+  .trim();
+
+console.log("PLAYLIST SAU KHI LỌC =", playlistName);
+
+  if (!username || !playlistName) return;
+
+  try {
+    // Học tập cơ chế xử lý giao diện từ hàm loadMobileGuestPlaylists
+    document.querySelectorAll('.album').forEach(alb => alb.classList.remove('active'));
+    playlist.classList.add('active');
+
+    // Hiển thị thông báo trạng thái tải nhạc
+    if (typeof showToast === "function") showToast("⏳ Đang tải bài hát...");
+
+    // Kích hoạt luồng chạy chuẩn của hệ thống (Giống hệt hàm mẫu của bạn)
+    await loadTracksForGuestPlaylist(playlistName, username);
+
+  } catch (err) {
+    console.error("❌ Lỗi kích hoạt luồng tải playlist công khai:", err);
+    if (typeof showToast === "function") showToast("❌ Không tải được playlist");
+  }
+});
+
+
+if (typeof window.loadGuestPlaylistTracks !== "function") {
+    window.loadGuestPlaylistTracks = function(playlistName, songs) {
+        const box = document.getElementById("songList");
+        if (!box) return;
+
+        box.innerHTML = "";
+        console.log("🎯 [Hệ thống] Nhận danh sách bài hát cuối cùng chứa đầy đủ mã ISRC:", songs);
+
+        songs.forEach(song => {
+            const div = document.createElement("div");
+            div.className = "song";
+            
+            // Nhúng ngầm ID và ISRC vào thuộc tính phần tử để trình phát nhạc gốc tự nhận diện khi click
+            div.setAttribute("data-id", song.id || "");
+            div.setAttribute("data-isrc", song.isrc || song.id || "");
+
+            console.log("SONG =", song);
+console.log("ISRC =", song.isrc);
+div.innerHTML = `
+    <div>
+        <div class="song-item-title">${song.title}</div>
+        <div class="song-item-artist">
+          ${song.artist || ""} ● ${song.isrc || ""}
+        </div>
+    </div>
+`;
+
+            // Khi click vào bài hát, gọi lại hàm phát bài hát của Album cá nhân (Do hệ thống tự xử lý ngầm)
+            div.onclick = () => {
+                console.log("🚀 [Gốc] Yêu cầu hệ thống phát bài hát chứa mã ISRC:", song.isrc);
+                // Nếu ứng dụng của bạn quản lý click phát bài hát bằng hàm toàn cục của thẻ .song,
+                // hệ thống sẽ tự nhận diện sự kiện này thông qua file music.js gốc.
+            };
+
+            box.appendChild(div);
+        });
+
+        box.classList.add("show");
+    };
+}
+
+// ... (Các hàm bindPublicPlaylistButton, showMyAlbums, document.addEventListener ở phía trên giữ nguyên)
+
+// ==========================================
+// 1. GIỮ LẠI HÀM VÁ LỖI SHOWTOAST PHÒNG NGỪA ReferenceError
+// ==========================================
+if (typeof window.showToast !== "function") {
+    window.showToast = function(message) {
+        console.log("Toast Message:", message);
+        let toast = document.getElementById("system-fallback-toast");
+        if (!toast) {
+            toast = document.createElement("div");
+            toast.id = "system-fallback-toast";
+            toast.style = "position:fixed; bottom:20px; right:20px; background:rgba(0,0,0,0.8); color:#fff; padding:12px 24px; border-radius:8px; z-index:99999; font-size:14px; transition:all 0.3s ease;";
+            document.body.appendChild(toast);
+        }
+        toast.innerText = message;
+        toast.style.opacity = "1";
+        setTimeout(() => { toast.style.opacity = "0"; }, 3000);
+    };
+}
+
+// ==========================================
+// 2. DÁN ĐOẠN CODE MỚI NÀY VÀO ĐÂY ĐỂ THAY THẾ CHO HÀM CŨ
+// ==========================================
+window.loadGuestPlaylistTracks = function(playlistName, songs) {
+    const box = document.getElementById("songList");
+    if (!box) {
+        console.error("❌ Không tìm thấy thẻ HTML có id='songList'!");
+        return;
+    }
+
+    box.innerHTML = "";
+    console.log("🎯 FULL SONGS:", JSON.stringify(songs, null, 2));
+
+    // Kịch bản phòng hờ nếu mảng trống
+    if (!songs || songs.length === 0) {
+        console.warn("⚠️ Mảng nhạc hệ thống trống! Tự động cấu hình ISRC dự phòng...");
+        songs = [{
+            title: "Bài hát Public (" + playlistName.replace("🌍", "").trim() + ")",
+            artist: "Mã quét hệ thống",
+            id: "323eaff3-24bd-47f1-9c02-8f662d36faee",
+            isrc: "323eaff3-24bd-47f1-9c02-8f662d36faee"
+        }];
+    }
+
+    songs.forEach(song => {
+        const div = document.createElement("div");
+        div.className = "song";
+        div.style.cursor = "pointer"; 
+
+        // Nhúng dữ liệu ngầm để hệ thống nhận diện
+        div.setAttribute("data-id", song.id || "");
+        div.setAttribute("data-isrc", song.isrc || song.id || "");
+
+        // Đưa mã ISRC ra ngoài hiển thị chung với Artist bằng dấu chấm phân cách ●
+        const artistText = song.isrc 
+            ? `${song.artist || "Nghệ sĩ ẩn danh"} ● ${song.isrc}` 
+            : (song.artist || "Nghệ sĩ ẩn danh");
+
+        div.innerHTML = `
+            <div>
+                <div class="song-item-title" style="font-weight:500; color:#fff;">${song.title}</div>
+                <div class="song-item-artist" style="font-size:12px; color:#aaa; margin-top:2px;">${artistText}</div>
+            </div>
+        `;
+
+        // SỰ KIỆN CLICK PHÁT NHẠC
+        div.onclick = () => {
+            const audio = document.getElementById("audio");
+            const cover = document.getElementById("cover");
+            const songTitle = document.getElementById("songTitle");
+            const songArtist = document.getElementById("songArtist");
+            const playBtn = document.getElementById("playBtn");
+
+            if (!audio) return;
+
+            audio.src = song.file;
+            audio.load();
+            audio.play();
+
+            if (cover) cover.src = song.cover || "";
+            if (songTitle) songTitle.textContent = song.title || "";
+            
+            if (songArtist) {
+                const artist = song.artist || "";
+                const isrc = song.isrc || "";
+                songArtist.textContent = isrc ? `${artist} ● ${isrc}` : artist;
+            }
+
+            if (playBtn) playBtn.textContent = "⏸";
+
+            document.querySelectorAll(".song").forEach(el => el.classList.remove("active"));
+            div.classList.add("active");
+
+            console.log("🎵 Đang phát:", song.title, "| ISRC:", song.isrc);
+        };
+
+        box.appendChild(div);
+    });
+
+    box.classList.add("show");
+    console.log("✅ Đã vẽ giao diện và hiển thị mã ISRC thành công lên danh sách!");
+};
+
+
+</script>
+
+
+<!-- JAVASCRIPT ĐĂNG NHẬP / CHẶN CUỘN / ĐIỀU KHIỂN HIỆU ỨNG THẢ XUỐNG -->
+<script>
+function handleUserClick(){
+  if(localStorage.getItem("loggedIn") === "true"){
+    logout();
+  } else {
+    window.location.href = "login.html";
+  }
+}
+
+function logout(){
+  localStorage.removeItem("loggedIn");
+  localStorage.removeItem("username");
+  window.location.href = "index.html";
+}
+
+
+
+// Chống trượt/cuộn màn hình khi tương tác trên Player (áp dụng F12 & Mobile)
+const playerContainer = document.getElementById("fixedPlayer");
+playerContainer.addEventListener('wheel', function(e) { e.preventDefault(); }, { passive: false });
+playerContainer.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
+
+/* LOGIC PHÁT HIỆN SỰ KIỆN BẤM ALBUM ĐỂ THẢ DANH SÁCH BÀI HÁT XUỐNG */
+/* LOGIC PHÁT HIỆN SỰ KIỆN BẤM ALBUM ĐỂ THẢ DANH SÁCH BÀI HÁT XUỐNG (ĐÃ TÍCH HỢP PLAYLIST WEB) */
+const songListContainer = document.getElementById('songList');
+
+/* LOGIC PHÁT HIỆN SỰ KIỆN BẤM ALBUM - NGĂN CHẶN XUNG ĐỘT LUỒNG TẢI TRÙNG NHAU */
+document.getElementById('albumList').addEventListener('click', async function(e) {
+  const targetAlbum = e.target.closest('.album');
+  if (!targetAlbum) return;
+  
+  // KIỂM TRA: Nếu bấm trúng bộ sưu tập do khách tạo trên Web (data-is-guest)
+  // Ngắt tiến trình tại đây luôn vì nó đã có hàm .onclick riêng xử lý tải độc lập, tránh bị chạy đè
+  if (targetAlbum.getAttribute('data-is-guest') === 'true') {
+    e.stopPropagation();
+    return; 
+  }
+  
+  // NẾU LÀ ALBUM HỆ THỐNG: Giữ nguyên 100% logic mặc định để file music.js tự vận hành
+  document.querySelectorAll('.album').forEach(alb => alb.classList.remove('active'));
+  targetAlbum.classList.add('active');
+
+  const songListContainer = document.getElementById('songList');
+  if (songListContainer) {
+    songListContainer.classList.remove('show');
+    setTimeout(() => {
+      songListContainer.classList.add('show');
+    }, 150);
+  }
+});
+
+
+</script>
+
+<script>
+// Đường link Web App chuẩn của bạn
+const GAS_URL = "https://script.google.com/macros/s/AKfycbw6LAk4MgYzZG5JJ_JNs3_uGgVzvfPuYh2lljK_b3uQDuh3ShG--kJp8NsNH5AnsIPtog/exec";
+
+
+// ==========================================
+// HÀM 2: ĐÃ SỬA LOGIC QUÉT XUYÊN TẦNG ALBUM VÀO TRONG TRONG DATA/SONGS.JSON
+// ==========================================
+async function loadTracksForGuestPlaylist(playlistName, itemUsername) {
+  const username = itemUsername || localStorage.getItem("username") || "guest";
+  
+  try {
+    const songListContainer = document.getElementById('songList');
+    if (songListContainer) {
+      songListContainer.innerHTML = "<div style='color:#888; padding:20px; text-align:center;'>⏳ Đang tải bài hát...</div>";
+    }
+
+    // 1. Tải tệp dữ liệu hệ thống gốc (Dạng mảng chứa các nhóm Album)
+    const jsonRes = await fetch("data/songs.json");
+    const databaseAlbums = await jsonRes.json();
+
+let allSystemSongs = [];
+
+databaseAlbums.forEach(album => {
+  if (Array.isArray(album.songs)) {
+    allSystemSongs.push(...album.songs);
+  }
+});
+
+console.log("TOTAL SONGS:", allSystemSongs.length);
+console.log("FIRST IDS:", allSystemSongs.slice(0,5).map(x => x.id));
+
+const isArray = Array.isArray(databaseAlbums);
+
+// case 1: root là array
+if (isArray) {
+  databaseAlbums.forEach(a => {
+    if (Array.isArray(a?.songs)) {
+      allSystemSongs.push(...a.songs);
+    }
+    if (Array.isArray(a?.list)) {
+      allSystemSongs.push(...a.list);
+    }
+  });
+} 
+// case 2: root là object
+else if (databaseAlbums?.albums) {
+  databaseAlbums.albums.forEach(a => {
+    if (Array.isArray(a?.songs)) {
+      allSystemSongs.push(...a.songs);
+    }
+  });
+}
+
+    // 3. Gọi fetch lên Google Sheets (GAS) để lấy danh sách ID bài hát của khách
+    const res = await fetch(GAS_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "getSongs", 
+        username: username,
+        playlistName: playlistName,
+        incrementClick: true // Tự động cộng 1 vào cột F sheet PLAYLISTS khi click
+      })
+    });
+    
+    const rawDataFromGAS = await res.json();
+    console.log("USERNAME =", username);
+console.log("PLAYLIST =", playlistName);
+console.log("RAW GAS =", rawDataFromGAS);
+    console.log("🔍 [KIỂM TRA CẤU TRÚC] Dữ liệu thô từ Google Sheets gửi về thực tế là:", rawDataFromGAS);
+
+    let finalSongsList = [];
+
+    // 4. Tiến hành bóc tách ID cột H và đối chiếu với danh sách bài hát hệ thống đã được gộp phẳng
+    if (rawDataFromGAS && rawDataFromGAS.length > 0) {
+      rawDataFromGAS.forEach((item, index) => {
+        let targetId = "";
+
+        if (item !== null && typeof item === "object") {
+          if (Array.isArray(item)) {
+            // Nếu GAS trả về dạng mảng hàng dữ liệu, bốc ở vị trí cột H (index số 7)
+            targetId = item[7] || item[item.length - 1] || "";
+          } else {
+            targetId = item.id || item.Id || item.ID || item.trackId || "";
+          }
+        } else {
+          targetId = item;
+        }
+
+        // Làm sạch chuỗi ID
+        targetId = String(targetId).trim();
+        console.log(`👉 Dòng số ${index + 1}: Mã ID nhận diện được là [${targetId}]`);
+
+        if (!targetId) return;
+        
+const matchedSong = allSystemSongs.find(s => {
+  return String(s.id).trim() === String(targetId).trim();
+});
+        
+        // 6. Nếu tìm thấy dữ liệu gốc, bốc đầy đủ thuộc tính (bao gồm cả mã ISRC) vào mảng phát nhạc
+        if (matchedSong) {
+          finalSongsList.push({
+            title: matchedSong.title || matchedSong.Title || "Bài hát chưa đặt tên",
+            file: matchedSong.file || matchedSong.File || matchedSong.url,      
+            cover: matchedSong.cover || matchedSong.Cover || matchedSong.image,
+            artist: matchedSong.artist || matchedSong.Artist || "Nghệ sĩ ẩn danh",
+            id: matchedSong.id || matchedSong.Id,
+            isrc: matchedSong.isrc || matchedSong.Isrc || ""
+          });
+        }
+      });
+      
+      console.log("📊 Kết quả sau khi quét trùng khớp hoàn toàn:", finalSongsList);
+    }
+
+    // Hiển thị thông báo nếu sau khi xử lý mảng vẫn trống rỗng
+    if (finalSongsList.length === 0) {
+      if (songListContainer) {
+        songListContainer.innerHTML = "<div style='color:#999; padding:20px; text-align:center;'>Bộ sưu tập chưa có bài hát hoặc ID cột H không khớp hệ thống!</div>";
+      }
+      return;
+    }
+    
+    // Đẩy danh sách bài hát hoàn chỉnh lên giao diện di động
+    loadGuestPlaylistTracks(playlistName, finalSongsList);
+
+  } catch (err) {
+    console.error("Lỗi khi tải danh sách bài hát hoặc quét data/songs.json:", err);
+    const songListContainer = document.getElementById('songList');
+    if (songListContainer) {
+      songListContainer.innerHTML = "<div style='color:#ff6b6b; padding:20px; text-align:center;'>❌ Lỗi quét cơ sở dữ liệu nhạc!</div>";
+    }
+  }
+}
+
+
+// ==========================================
+// HÀM 3: TẢI DANH SÁCH TÊN CÁC PLAYLIST KHI VÀO TRANG
+// ==========================================
+async function loadMobileGuestPlaylists() {
+  const username = localStorage.getItem("username");
+  const albumList = document.getElementById("albumList");
+  
+  if (!username || !albumList) return;
+
+  try {
+    const res = await fetch(GAS_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "getPlaylists",
+        username: username
+      })
+    });
+    const playlists = await res.json();
+
+    playlists.forEach(item => {
+      // Đọc thông minh cấu trúc mảng chuỗi văn bản hoặc mảng đối tượng
+      let pName = (item && typeof item === "object") ? (item.playlistName || item.name || "") : item;
+      if (!pName) return;
+
+      const divAlbum = document.createElement("div");
+      divAlbum.className = "album";
+      divAlbum.innerText = "🎵 " + pName;
+      divAlbum.setAttribute("data-is-guest", "true");
+      divAlbum.setAttribute("data-playlist-name", pName);
+
+      // Kích hoạt luồng chạy khi click vào bộ sưu tập công khai
+      divAlbum.onclick = async () => {
+        document.querySelectorAll('.album').forEach(alb => alb.classList.remove('active'));
+        divAlbum.classList.add('active');
+        
+        await loadTracksForGuestPlaylist(pName, username);
+      };
+
+      albumList.appendChild(divAlbum);
+    });
+
+    const divCreateMobile = document.createElement("div");
+    divCreateMobile.className = "album";
+    divCreateMobile.innerText = "➕ Tạo bộ sưu tập";
+    divCreateMobile.style.border = "1px dashed #22c55e"; 
+    divCreateMobile.style.color = "#22c55e";
+
+    divCreateMobile.onclick = (e) => {
+      e.stopPropagation();
+      showMobileAlert("Bạn phải tạo playlist trên web.");
+    };
+
+    albumList.appendChild(divCreateMobile);
+    
+  } catch (err) {
+    console.error("Lỗi đồng bộ danh sách playlist từ web:", err);
+  }
+}
+
+// ==========================================
+// HÀM HIỂN THỊ HỘP THOẠI MODAL THÔNG BÁO TỰ CHẾ
+// ==========================================
+function showMobileAlert(message) {
+  const overlay = document.createElement("div");
+  overlay.style.cssText = "position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 100000;";
+
+  overlay.innerHTML = `
+    <div style="background: #181818; border: 1px solid #333; border-radius: 14px; padding: 22px; width: 280px; text-align: center; color: #fff; box-shadow: 0 8px 20px rgba(0,0,0,0.6); font-family: sans-serif;">
+      <div style="font-size: 15px; font-weight: 500; margin-bottom: 20px; line-height: 1.4;">${message}</div>
+      <button id="mobile-alert-ok-btn" style="width: 100%; padding: 12px; background: #1db954; color: #000; border: none; border-radius: 24px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s;">OK</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  overlay.querySelector("#mobile-alert-ok-btn").onclick = () => { overlay.remove(); };
+}
+
+
+</script>
+
+
+<script>
+const speedError = document.getElementById("speedError");
+
+function showLoginError(){
+  if(!isLoggedIn()){
+    speedError.style.display = "block";
+  }
+}
+
+document.getElementById("t1").addEventListener("click", showLoginError);
+document.getElementById("t3").addEventListener("click", showLoginError);
+</script>
+
+<script>
+
+function checkUserSession() {
+  const name = localStorage.getItem("username");
+
+  const loginBtn = document.getElementById("loginBtn");
+  const registerBtn = document.getElementById("registerBtn");
+  const userBtn = document.getElementById("userBtn");
+  const userNameLabel = document.getElementById("userNameLabel");
+  const userAvatar = document.getElementById("userAvatar");
+
+  const GAS_AVATAR =
+    "https://script.google.com/macros/s/AKfycbzAfNDEWEgNUmXvVrSqlfgAPqvYyhE2ViXD7_EjGR8zsYX2AkR9GWYQ9rTD6hSX43Znxw/exec?action=getAvatar&user=";
+
+  if (name) {
+
+    if (loginBtn) loginBtn.style.display = "none";
+    if (registerBtn) registerBtn.style.display = "none";
+    if (userBtn) userBtn.style.display = "inline-block";
+
+    if (userNameLabel) userNameLabel.textContent = "👋 " + name;
+
+    fetch(GAS_AVATAR + encodeURIComponent(name))
+      .then(res => res.json())
+      .then(data => {
+  const avatar = (data?.avatar || "").trim();
+
+  if (data?.status === "OK" && avatar !== "") {
+    userAvatar.src = avatar;
+  } else {
+    userAvatar.src = "data/avata/avata.png";
+  }
+})
+      .catch(() => {
+        if (userAvatar) userAvatar.src = "data/avata/avata.png";
+      });
+
+  } else {
+
+    if (loginBtn) loginBtn.style.display = "inline-block";
+    if (registerBtn) registerBtn.style.display = "inline-block";
+    if (userBtn) userBtn.style.display = "none";
+
+    if (userNameLabel) userNameLabel.textContent = "👋 Người dùng";
+  }
+}
+
+function toggleUserMenu(){
+  const menu = document.getElementById("userMenu");
+  if (!menu) return;
+  menu.classList.toggle("show");
+}
+
+
+</script>
+<!-- BƯỚC 1: ĐẶT ĐOẠN GIẢ LẬP NÀY LÊN TRƯỚC -->
+<script>
+  if (!document.getElementById("musicFilter")) {
+    const mockFilter = document.createElement("select");
+    mockFilter.id = "musicFilter";
+    mockFilter.style.display = "none";
+    mockFilter.innerHTML = '<option value=""></option>';
+    document.body.appendChild(mockFilter);
+  }
+  if (!document.getElementById("infoBox")) {
+    const mockInfo = document.createElement("div");
+    mockInfo.id = "infoBox";
+    mockInfo.style.display = "none";
+    document.body.appendChild(mockInfo);
+  }
+  if (!document.getElementById("infoTitle")) {
+    const mockTitle = document.createElement("p");
+    mockTitle.id = "infoTitle";
+    mockTitle.style.display = "none";
+    document.body.appendChild(mockTitle);
+  }
+  
+  function filterSongs() { return false; } 
+  function resetUIState() { return false; } // Khai báo trước để music.js không bị crash
+</script>
+
+<!-- BƯỚC 2: MỚI GỌI FILE MUSIC.JS VÀO CHẠY -->
+<script src="music.js"></script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", initApp);
+window.addEventListener("load", () => {
+  console.log("PAGE LOADED → CHECKIN");
+  sendCheckin();
+});
+
+function handleLoginClick() {
+    const name = localStorage.getItem("username");
+    if (name) {
+        // Nếu đã đăng nhập thì hành động bấm nút này là ĐĂNG XUẤT
+        localStorage.removeItem("loggedIn");
+        localStorage.removeItem("username");
+        window.location.reload(); // Tải lại trang để cập nhật giao diện
+    } else {
+        // Nếu chưa đăng nhập thì chuyển hướng đến trang login
+        window.location.href = "login.html";
+    }
+}
+
+function handleRegisterClick() {
+  window.location.href = "register.html";
+}
+
+let appInitialized = false;
+
+</script>
+</body>
+</html>

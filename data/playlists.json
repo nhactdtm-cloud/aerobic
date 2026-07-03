@@ -1,0 +1,116 @@
+[
+  {
+    "id": "pl_1782714921571",
+    "id_user": "",
+    "username": "nhactdtm",
+    "playlist_name": "New Music",
+    "description": "Ủng hộ tớ nhé hihi",
+    "date": "2026-06-29",
+    "visibility": "public",
+    "songids": [
+      "ebe9d3d1-c858-4af7-a5e0-fe69b9c560be"
+    ],
+    "member": 0,
+    "plan": 100
+  },
+  {
+    "id": "pl_1782798637149",
+    "id_user": "",
+    "username": "putin1",
+    "playlist_name": "Ca Tối 18H",
+    "description": "Xin cảm ơn",
+    "date": "2026-06-30",
+    "visibility": "public",
+    "songids": [
+      "a42119fe-2f5b-45e8-b0df-d86c1bd495ab"
+    ],
+    "member": 0,
+    "plan": 0
+  },
+  {
+    "id": "pl_1782811112498",
+    "id_user": "",
+    "username": "putin1",
+    "playlist_name": "Ca sáng phùng khoang",
+    "description": "",
+    "date": "2026-06-30",
+    "visibility": "public",
+    "songids": [],
+    "member": 0,
+    "plan": 0
+  },
+  {
+    "id": "pl_1782811205285",
+    "id_user": "",
+    "username": "putin1",
+    "playlist_name": "Test 123",
+    "description": "",
+    "date": "2026-06-30",
+    "visibility": "private",
+    "songids": [],
+    "member": 0,
+    "plan": 0
+  },
+  {
+    "id": "pl_1782811456825",
+    "id_user": "",
+    "username": "nhactdtm",
+    "playlist_name": "Xin chào",
+    "description": "",
+    "date": "2026-06-30",
+    "visibility": "private",
+    "songids": [
+      "ebe9d3d1-c858-4af7-a5e0-fe69b9c560be"
+    ],
+    "member": 0,
+    "plan": 0
+  },
+  {
+    "id": "pl_1782811620971",
+    "id_user": "",
+    "username": "putin1",
+    "playlist_name": "12345",
+    "description": "",
+    "date": "2026-06-30",
+    "visibility": "private",
+    "songids": [],
+    "member": 0,
+    "plan": 0
+  },
+  {
+    "id": "pl_1782815063668",
+    "id_user": "",
+    "username": "putin1",
+    "playlist_name": "Hihi",
+    "description": "",
+    "date": "2026-06-30",
+    "visibility": "private",
+    "songids": [],
+    "member": 0,
+    "plan": 0
+  },
+  {
+    "id": "pl_1782815121334",
+    "id_user": "",
+    "username": "putin1",
+    "playlist_name": "Nguyễn Anh Tuán",
+    "description": "",
+    "date": "2026-06-30",
+    "visibility": "private",
+    "songids": [],
+    "member": 0,
+    "plan": 0
+  },
+  {
+    "id": "pl_1782982467678",
+    "id_user": "",
+    "username": "nhactdtm",
+    "playlist_name": "Ca 7h",
+    "description": "",
+    "date": "2026-07-02",
+    "visibility": "private",
+    "songids": [],
+    "member": 0,
+    "plan": 0
+  }
+]

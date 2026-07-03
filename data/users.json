@@ -1,0 +1,88 @@
+{
+  "users": [
+    {
+      "id": "u_1782320170044",
+      "fullName": "Anh Tuấn",
+      "username": "nhactdtm",
+      "password": "nhactdtm1",
+      "birthday": {
+        "day": "09",
+        "month": "10",
+        "year": "1992"
+      },
+      "gender": "Nam",
+      "email": "nhactdtm@gmail.com",
+      "avatar": "data/avatar/nhactdtm_1782496727137.png",
+      "createdAt": "2026-06-24",
+      "pinnedPlaylistIds": [
+        "pl_1782714921571"
+      ]
+    },
+    {
+      "id": "u_1782360616311",
+      "fullName": "Putin 1",
+      "username": "putin1",
+      "password": "1",
+      "birthday": {
+        "day": "06",
+        "month": "01",
+        "year": "1970"
+      },
+      "gender": "Nữ",
+      "email": "th1.nhactdtm@gmail.com",
+      "avatar": "data/avatar/putin1_1782492997258.png",
+      "createdAt": "2026-06-25",
+      "pinnedPlaylistIds": [
+        "pl_1782716244958"
+      ]
+    },
+    {
+      "id": "u_1782384228041",
+      "fullName": "",
+      "username": "abcdabcd",
+      "password": "12",
+      "birthday": {
+        "day": "",
+        "month": "",
+        "year": ""
+      },
+      "gender": "",
+      "email": "",
+      "avatar": "",
+      "createdAt": "2026-06-25",
+      "pinnedPlaylistIds": []
+    },
+    {
+      "id": "u_1782384244275",
+      "fullName": "",
+      "username": "abcd abcd",
+      "password": "12",
+      "birthday": {
+        "day": "",
+        "month": "",
+        "year": ""
+      },
+      "gender": "",
+      "email": "",
+      "avatar": "",
+      "createdAt": "2026-06-25",
+      "pinnedPlaylistIds": []
+    },
+    {
+      "id": "u_1782384406914",
+      "fullName": "",
+      "username": "nguyennguyen",
+      "password": "123412341234",
+      "birthday": {
+        "day": "",
+        "month": "",
+        "year": ""
+      },
+      "gender": "",
+      "email": "",
+      "avatar": "",
+      "createdAt": "2026-06-25",
+      "pinnedPlaylistIds": []
+    }
+  ]
+}

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Music</title>
+
+<style>
+/* Reset và cài đặt font chữ hiện đại */
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* THAY ĐỔI: Sử dụng ảnh nền bạn gửi kết hợp lớp phủ gradient kem mờ cổ điển */
+  background: 
+    linear-gradient(135deg, rgba(253, 251, 247, 0.9), rgba(234, 230, 221, 0.85)),
+    url("https://www.dropbox.com/scl/fi/vyihlbv9i3bxlau7vnp8v/lambanner-kich-thuoc-anh-bia-youtube-2020-content.jpg?rlkey=64jqb92n2b9dt20mi8tpv1m1a&st=c9b86e0x&dl=1") center/cover no-repeat;
+  padding: 20px;
+}
+
+/* Khung đăng nhập cao cấp, bo góc mềm mại */
+.login-box {
+  width: 100%;
+  max-width: 380px;
+  padding: 40px 30px;
+  background: #FFFFFF; /* THAY ĐỔI: Khung đổi sang màu trắng tinh sạch sẽ */
+  border-radius: 24px;
+  /* THAY ĐỔI: Viền và đổ bóng chuyển sang tông xám/xanh rêu mờ để tạo chiều sâu trên nền sáng */
+  border: 1px solid rgba(30, 66, 51, 0.1);
+  box-shadow: 0 15px 35px rgba(30, 66, 51, 0.08);
+  text-align: center;
+}
+
+/* Logo & Tiêu đề chào mừng */
+.logo {
+  font-size: 16px;
+  font-weight: 800;
+  color: #1E4233; /* THAY ĐỔI: Logo chữ đổi sang màu Xanh rêu đậm thương hiệu */
+  letter-spacing: 0.5px;
+  margin-bottom: 35px;
+  line-height: 1.4;
+}
+
+/* Khung bao bọc ô nhập liệu */
+.input-box {
+  margin-bottom: 18px;
+  position: relative;
+}
+
+/* Ô nhập liệu tinh chỉnh mềm mại */
+.input-box input {
+  width: 100%;
+  padding: 15px 16px;
+  border: 1px solid rgba(30, 66, 51, 0.15); /* THAY ĐỔI: Viền màu xanh rêu nhạt mảnh */
+  outline: none;
+  border-radius: 12px;
+  background: #FDFBF7; /* THAY ĐỔI: Nền ô nhập liệu màu trắng kem */
+  color: #212121; /* THAY ĐỔI: Chữ gõ vào màu đen chì */
+  font-size: 15px;
+  transition: all 0.25s ease;
+}
+
+/* Hiệu ứng khi nhấn vào ô nhập liệu */
+.input-box input:focus {
+  background: #FFFFFF; /* THAY ĐỔI: Trở về màu trắng tinh khi gõ */
+  border-color: #1E4233; /* THAY ĐỔI: Đổi viền sang Xanh rêu đậm */
+  box-shadow: 0 0 0 3px rgba(30, 66, 51, 0.12); /* THAY ĐỔI: Vòng sáng mờ xanh rêu */
+}
+
+/* Thay đổi màu chữ gợi ý (Placeholder) */
+.input-box input::placeholder {
+  color: #888888; /* THAY ĐỔI: Đổi sang xám trung tính */
+}
+
+.password-box{
+  position: relative;
+}
+
+.password-box input{
+  padding-right: 50px;
+}
+
+.toggle-eye{
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  user-select: none;
+  opacity: 0.7;
+}
+
+.toggle-eye:hover{
+  opacity: 1;
+}
+
+/* Nhóm chứa các nút bấm */
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+/* Nút Đăng nhập chính nổi bật */
+button.btn-primary {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  background: #1E4233; /* THAY ĐỔI: Nút chính chuyển sang màu Xanh rêu đậm */
+  color: #FFFFFF; /* THAY ĐỔI: Chữ màu trắng tương phản sắc nét */
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(30, 66, 51, 0.15); /* THAY ĐỔI: Đổ bóng theo tông xanh rêu */
+}
+
+button.btn-primary:hover {
+  background: #285441; /* THAY ĐỔI: Xanh rêu sáng hơn một chút khi hover */
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(30, 66, 51, 0.25);
+}
+
+/* Nút Tạo tài khoản phụ tinh tế */
+button.btn-secondary {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid rgba(30, 66, 51, 0.3); /* THAY ĐỔI: Viền màu xanh rêu mảnh */
+  border-radius: 12px;
+  background: transparent;
+  color: #1E4233; /* THAY ĐỔI: Chữ màu xanh rêu đậm nghệ thuật */
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button.btn-secondary:hover {
+  color: #FFFFFF; /* THAY ĐỔI: Chữ đổi sang trắng khi hover */
+  border-color: #1E4233;
+  background: #1E4233; /* THAY ĐỔI: Phủ màu xanh rêu kín nút khi hover */
+}
+
+/* Hiệu ứng đàn hồi khi người dùng chạm ngón tay trên điện thoại */
+button:active {
+  transform: scale(0.98) !important;
+}
+
+/* Thông báo lỗi thiết kế gọn gàng */
+.error {
+  color: #C84B31; /* THAY ĐỔI: Màu chữ thông báo lỗi dùng màu Đỏ gạch */
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 18px;
+  padding: 10px;
+  background: rgba(200, 75, 49, 0.1); /* THAY ĐỔI: Nền màu đỏ gạch mờ nhẹ */
+  border-radius: 8px;
+  border-left: 3px solid #C84B31; /* THAY ĐỔI: Thanh chỉ viền trái màu đỏ gạch */
+  text-align: left;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Hiệu ứng xuất hiện mượt mà cho thông báo lỗi */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="login-box">
+
+  <div class="logo">
+    XIN CHÀO<br>MỜI BẠN ĐĂNG NHẬP
+  </div>
+
+  <div class="input-box">
+    <input type="text" id="username" placeholder="Tên đăng nhập" autocomplete="username">
+  </div>
+
+<div class="input-box password-box">
+  <input type="password" id="password" placeholder="Mật khẩu" autocomplete="current-password">
+
+  <span class="toggle-eye" onclick="togglePassword(this)">
+    👁️
+  </span>
+</div>
+
+  <div class="button-group">
+    <button class="btn-primary" onclick="login()">
+      Đăng nhập
+    </button>
+    <button class="btn-secondary" onclick="window.location.href='register.html'">
+      Tạo tài khoản mới
+    </button>
+  </div>
+
+  <div class="error" id="error">
+    Sai tài khoản hoặc mật khẩu
+  </div>
+
+</div>
+
+<script>
+
+function togglePassword(el) {
+  const input = document.getElementById("password");
+
+  if (input.type === "password") {
+    input.type = "text";
+    el.textContent = "🙈";
+  } else {
+    input.type = "password";
+    el.textContent = "👁️";
+  }
+}
+
+localStorage.removeItem("loggedIn");
+
+function login(event) {
+  if (event && event.preventDefault) event.preventDefault();
+
+  const user = document.getElementById("username").value.trim();
+  const pass = document.getElementById("password").value.trim();
+  const errorEl = document.getElementById("error");
+
+  if (!user || !pass) {
+    errorEl.style.display = "block";
+    errorEl.innerText = "Vui lòng nhập đầy đủ tài khoản và mật khẩu.";
+    return;
+  }
+
+  // Đổi link raw từ kho chứa GitHub public của bạn
+  // Cấu trúc: https://githubusercontent.com[User_Name]/[Repo_Name]/[Branch]/[Đường_dẫn_file]
+  const githubRawUrl = "https://raw.githubusercontent.com/nhactdtm-cloud/aerobic/main/data/users.json";
+
+fetch(githubRawUrl)
+  .then(res => {
+    if (!res.ok) throw new Error("Không thể tải file JSON từ GitHub");
+    return res.json();
+  })
+  .then(data => {
+    const matchedUser = data.users.find(
+      u => u.username === user && u.password === pass
+    );
+
+    if (matchedUser) {
+      localStorage.setItem("loggedIn", "true");
+      localStorage.setItem("userid", matchedUser.id);
+      localStorage.setItem("fullname", matchedUser.fullName);
+      localStorage.setItem("username", matchedUser.username);
+
+      window.location.href = "index.html";
+    } else {
+      errorEl.style.display = "block";
+      errorEl.innerText = "Tên đăng nhập hoặc mật khẩu không chính xác.";
+    }
+  })
+  .catch(err => {
+    errorEl.style.display = "block";
+    errorEl.innerText = "Không thể kết nối đến kho dữ liệu mẫu.";
+    console.error(err);
+  });
+}
+
+
+
+</script>
+</body>
+</html>

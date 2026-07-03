@@ -1,0 +1,43 @@
+[
+  {
+    "id": "pl_1782714921571",
+    "id_user": "",
+    "username": "nhactdtm",
+    "playlist_name": "New Music",
+    "description": "Ủng hộ tớ nhé",
+    "date": "2026-06-29",
+    "visibility": "public",
+    "songids": [],
+    "member": 0,
+    "plan": 100
+  },
+  {
+    "id": "pl_1782716244958",
+    "id_user": "",
+    "username": "nhactdtm",
+    "playlist_name": "Ok con dê",
+    "description": "nghịch quá",
+    "date": "2026-06-29",
+    "visibility": "public",
+    "songids": [
+      "067b4bf4-1152-4acb-a9d9-c6e1f3acd70c",
+      "d0c9cd40-b90b-4c54-bc81-c406f83556fb"
+    ],
+    "member": 0,
+    "plan": 0
+  },
+  {
+    "id": "pl_1782798637149",
+    "id_user": "",
+    "username": "putin1",
+    "playlist_name": "Ca Tối 7h",
+    "description": "",
+    "date": "2026-06-30",
+    "visibility": "public",
+    "songids": [
+      "a42119fe-2f5b-45e8-b0df-d86c1bd495ab"
+    ],
+    "member": 0,
+    "plan": 0
+  }
+]

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thanh toán</title>
+<style>
+:root {
+    /* Indie Vinyl Retro Palette */
+    --bg: #FDFBF7;        /* nền kem */
+    --primary: #1E4233;   /* xanh rêu đậm */
+    --accent: #C84B31;    /* đỏ gạch */
+    --text: #212121;      /* đen mềm */
+    --card: #FFFFFF;      /* card trắng nhẹ */
+    --border: #E7E2D9;    /* viền nhẹ */
+    --hover: #F3EFE7;     /* hover nền */
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 240px;
+    background: var(--card);
+    height: 100vh;
+    padding: 20px;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.06);
+    border-right: 1px solid var(--border);
+}
+
+.sidebar h2 {
+    color: var(--primary);
+    margin-bottom: 30px;
+}
+
+.menu a {
+    display: block;
+    padding: 12px;
+    margin: 5px 0;
+    color: var(--text);
+    text-decoration: none;
+    border-radius: 10px;
+    transition: 0.2s;
+}
+
+.menu a:hover {
+    background: var(--hover);
+    color: var(--primary);
+}
+
+/* MAIN */
+.main {
+    flex: 1;
+    padding: 20px;
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* CARDS */
+.card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+    border: 1px solid var(--border);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+/* BALANCE CARD */
+.balance {
+    background: linear-gradient(135deg, var(--primary), #2d5a45);
+    color: var(--bg);
+}
+
+.balance h1 {
+    font-size: 40px;
+    margin: 10px 0;
+}
+
+/* BUTTONS */
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 5px;
+    transition: 0.2s;
+}
+
+.btn {
+    background: var(--bg);
+    color: var(--primary);
+    font-weight: bold;
+    border: 1px solid var(--border);
+}
+
+.btn:hover {
+    background: var(--hover);
+}
+
+.btn-blue {
+    background: var(--primary);
+    color: var(--bg);
+}
+
+.btn-blue:hover {
+    background: #163528;
+}
+
+/* PACKAGE + HISTORY */
+.packages, .history {
+    margin-top: 20px;
+}
+
+.package {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-top: 10px;
+    background: var(--card);
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+/* INPUT */
+input {
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    width: 100%;
+    margin-top: 10px;
+    background: var(--bg);
+    color: var(--text);
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h2>💳 Thanh toán</h2>
+    <div class="menu">
+        <a href="#">🏠 Tổng quan</a>
+        <a href="#">➕ Nạp tiền</a>
+        <a href="#">📦 Gói đã đăng ký</a>
+        <a href="#">📜 Lịch sử</a>
+        <a href="#">⚙️ Cài đặt</a>
+    </div>
+</div>
+
+<div class="main">
+
+    <div class="top">
+        <h2>Tổng quan</h2>
+        <div>👤 Nguyễn Văn A</div>
+    </div>
+
+    <div class="grid">
+
+        <!-- SỐ DƯ -->
+        <div class="card balance">
+            <h3>Số dư hiện tại</h3>
+            <h1 id="balance">2.350.000 đ</h1>
+
+            <button class="btn" onclick="addMoney()">+ Nạp tiền</button>
+            <button class="btn">Lịch sử giao dịch</button>
+        </div>
+
+        <!-- NẠP TIỀN -->
+        <div class="card">
+            <h3>Nạp tiền nhanh</h3>
+
+            <button onclick="quick(100000)">100K</button>
+            <button onclick="quick(200000)">200K</button>
+            <button onclick="quick(500000)">500K</button>
+
+            <input id="moneyInput" placeholder="Nhập số tiền">
+
+            <button class="btn-blue" onclick="deposit()">Nạp ngay</button>
+        </div>
+
+    </div>
+
+    <!-- GÓI -->
+    <div class="card packages">
+        <h3>📦 Gói đã đăng ký</h3>
+
+        <div class="package">
+            <div>
+                <b>Gói Premium</b>
+                <div>Hiệu lực: 01/06/2026</div>
+            </div>
+            <div style="color:green;">299.000đ/tháng</div>
+        </div>
+    </div>
+
+    <!-- LỊCH SỬ -->
+    <div class="card history">
+        <h3>📜 Lịch sử giao dịch</h3>
+
+        <div class="history-item">
+            <span>Nạp MoMo</span>
+            <span style="color:green;">+500.000đ</span>
+        </div>
+
+        <div class="history-item">
+            <span>Mua gói Premium</span>
+            <span style="color:red;">-299.000đ</span>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+let balance = 2350000;
+
+function format(n){
+    return n.toLocaleString('vi-VN') + " đ";
+}
+
+function update(){
+    document.getElementById("balance").innerText = format(balance);
+}
+
+function quick(m){
+    document.getElementById("moneyInput").value = m;
+}
+
+function deposit(){
+    let val = parseInt(document.getElementById("moneyInput").value);
+    if(!val) return alert("Nhập số tiền!");
+
+    balance += val;
+    update();
+    alert("Nạp thành công +" + format(val));
+}
+
+function addMoney(){
+    let val = prompt("Nhập số tiền muốn nạp:");
+    val = parseInt(val);
+    if(!val) return;
+
+    balance += val;
+    update();
+}
+</script>
+
+</body>
+</html>

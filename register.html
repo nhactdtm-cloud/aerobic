@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đăng ký thành viên</title>
+
+<style>
+/* Reset và cài đặt font chữ hiện đại đồng bộ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* THAY ĐỔI: Phủ lớp màu kem mờ kết hợp ảnh nền vinyl cổ điển */
+  background: 
+    linear-gradient(135deg, rgba(253, 251, 247, 0.9), rgba(234, 230, 221, 0.85)),
+    url("https://www.dropbox.com/scl/fi/vyihlbv9i3bxlau7vnp8v/lambanner-kich-thuoc-anh-bia-youtube-2020-content.jpg?rlkey=64jqb92n2b9dt20mi8tpv1m1a&st=c9b86e0x&dl=1") center/cover no-repeat;
+  padding: 20px;
+}
+
+/* Khung đăng ký thiết kế chuẩn chỉnh */
+.box {
+  width: 100%;
+  max-width: 380px;
+  padding: 40px 30px;
+  background: #FFFFFF; /* THAY ĐỔI: Khung màu trắng tinh nổi bật trên nền kem */
+  border-radius: 24px;
+  border: 1px solid rgba(30, 66, 51, 0.1); /* THAY ĐỔI: Viền xanh rêu siêu mờ */
+  box-shadow: 0 15px 35px rgba(30, 66, 51, 0.08); /* THAY ĐỔI: Đổ bóng màu xanh rêu nhẹ để tạo chiều sâu */
+  text-align: center;
+}
+
+/* Tiêu đề */
+h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #212121; /* THAY ĐỔI: Tiêu đề màu đen chì */
+  margin-bottom: 25px;
+  letter-spacing: 0.5px;
+}
+
+/* Ô nhập liệu tinh chỉnh mượt mà */
+input, select {
+  width: 100%;
+  padding: 15px 16px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(30, 66, 51, 0.15); /* THAY ĐỔI: Viền mặc định màu xanh rêu nhạt */
+  outline: none;
+  border-radius: 12px;
+  background: #FDFBF7; /* THAY ĐỔI: Nền ô nhập liệu màu trắng kem */
+  color: #212121; /* THAY ĐỔI: Chữ nhập vào màu đen chì */
+  font-size: 15px;
+  transition: all 0.25s ease;
+}
+
+/* Hiệu ứng khi nhấn chọn vào ô nhập dữ liệu */
+input:focus, select:focus {
+  background: #FFFFFF; /* THAY ĐỔI: Chuyển sang trắng tinh khi gõ */
+  border-color: #1E4233; /* THAY ĐỔI: Đổi viền sang màu Xanh rêu đậm khi focus */
+  box-shadow: 0 0 0 3px rgba(30, 66, 51, 0.12); /* THAY ĐỔI: Viền mờ màu xanh rêu bao quanh */
+}
+
+input::placeholder {
+  color: #888888; /* THAY ĐỔI: Đổi màu chữ gợi ý sang xám trung tính dễ nhìn trên nền sáng */
+}
+
+/* CSS BỔ SUNG: Cụm Ngày - Tháng - Năm */
+.dob-label {
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1E4233;
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+.dob-group {
+  display: flex;
+  gap: 8px;
+}
+.dob-group select {
+  flex: 1;
+}
+
+/* Nhóm chứa bộ đôi nút bấm */
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+/* Nút Tạo tài khoản chính nổi bật */
+button.btn-primary {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  background: #1E4233; /* THAY ĐỔI: Nút chính chuyển sang màu Xanh rêu đậm cực sang trọng */
+  color: #FFFFFF; /* THAY ĐỔI: Chữ màu trắng nổi bật trên nền xanh */
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(30, 66, 51, 0.15); /* THAY ĐỔI: Đổ bóng theo tông xanh rêu */
+}
+
+button.btn-primary:hover {
+  background: #285441; /* THAY ĐỔI: Màu xanh rêu sáng hơn một chút khi di chuột */
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(30, 66, 51, 0.25);
+}
+
+/* Nút Quay lại đăng nhập phụ tinh tế */
+button.btn-secondary {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid rgba(30, 66, 51, 0.3); /* THAY ĐỔI: Viền màu xanh rêu mảnh */
+  border-radius: 12px;
+  background: transparent;
+  color: #1E4233; /* THAY ĐỔI: Chữ màu xanh rêu đậm tinh tế */
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button.btn-secondary:hover {
+  color: #FFFFFF; /* THAY ĐỔI: Chữ chuyển trắng khi hover */
+  border-color: #1E4233;
+  background: #1E4233; /* THAY ĐỔI: Phủ kín màu xanh rêu khi hover */
+}
+
+/* Hiệu ứng phản hồi chạm trên điện thoại */
+button:active {
+  transform: scale(0.98) !important;
+}
+
+/* Thông báo lỗi dạng khung chứa cao cấp */
+#error {
+  color: #C84B31; /* THAY ĐỔI: Màu thông báo lỗi dùng màu Đỏ gạch của hệ màu mới */
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 18px;
+  padding: 10px 14px;
+  background: rgba(200, 75, 49, 0.1); /* THAY ĐỔI: Nền đỏ gạch mờ */
+  border-radius: 8px;
+  border-left: 3px solid #C84B31; /* THAY ĐỔI: Thanh viền trái màu đỏ gạch */
+  text-align: left;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.password-box{
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.password-box input{
+  width: 100%;
+  padding-right: 50px;
+}
+
+.toggle-eye{
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  user-select: none;
+}
+
+/* Ẩn icon hiện mật khẩu mặc định của trình duyệt (Edge/Chrome) */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+input::-webkit-credentials-auto-fill-button {
+  display: none !important;
+}
+
+input::-webkit-textfield-decoration-container {
+  display: none;
+}
+/* Hiệu ứng xuất hiện mềm mại */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* TỐI ƯU CHO MOBILE */
+@media (max-width: 480px) {
+  .box {
+    padding: 35px 20px;
+    border-radius: 20px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>Tạo tài khoản mới</h2>
+
+  <input id="user" placeholder="Tên tài khoản mới" autocomplete="username">
+<div class="password-box">
+  <input id="pass" type="password"
+         placeholder="Tạo mật khẩu mới"
+         autocomplete="new-password">
+
+  <span class="toggle-eye"
+        onclick="togglePassword('pass', this)">
+    👁️
+  </span>
+</div>
+
+<div class="password-box">
+  <input id="repass" type="password"
+         placeholder="Nhập lại mật khẩu"
+         autocomplete="new-password">
+
+  <span class="toggle-eye"
+        onclick="togglePassword('repass', this)">
+    👁️
+  </span>
+</div>
+
+  <div class="button-group">
+    <button class="btn-primary" onclick="register()">
+      Đăng ký thành viên
+    </button>
+    <button class="btn-secondary" onclick="window.location.href='login.html'">
+      Quay lại Đăng nhập
+    </button>
+  </div>
+
+  <div id="error">Lỗi tạo tài khoản</div>
+</div>
+
+<script>
+
+  function togglePassword(inputId, eye) {
+  const input = document.getElementById(inputId);
+
+  if (input.type === "password") {
+    input.type = "text";
+    eye.textContent = "🙈";
+  } else {
+    input.type = "password";
+    eye.textContent = "👁️";
+  }
+}
+
+
+function createLocalUser(username, password) {
+  const user = {
+    id: generateUserId(),
+    username,
+    password
+  };
+
+  localStorage.setItem("user", JSON.stringify(user));
+  localStorage.setItem("loggedIn", "true");
+
+  return user;
+}
+
+function getCurrentUser() {
+  return JSON.parse(localStorage.getItem("user"));
+}
+
+function goProfile(){
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user) {
+    alert("Bạn chưa đăng nhập");
+    return;
+  }
+
+  window.location.href = "profile.html?id=" + user.id;
+}
+
+
+
+function register(){
+  const user = document.getElementById("user").value.trim();
+  const pass = document.getElementById("pass").value.trim();
+  const repass = document.getElementById("repass").value.trim();
+  
+  
+  const errorEl = document.getElementById("error");
+
+  // kiểm tra username không có dấu cách
+if (user.includes(" ")) {
+  errorEl.style.display = "block";
+  errorEl.innerText = "Tên tài khoản không được chứa dấu cách.";
+  return;
+}
+
+// kiểm tra độ dài tối thiểu 10 ký tự
+if (user.length < 10) {
+  errorEl.style.display = "block";
+  errorEl.innerText = "Tên tài khoản phải từ 10 ký tự trở lên.";
+  return;
+}
+  // Thay đổi alert thô sơ bằng khung báo lỗi đồng bộ đẹp mắt
+if(!user || !pass || !repass){
+  errorEl.style.display = "block";
+  errorEl.innerText = "Vui lòng điền đầy đủ thông tin.";
+  return;
+}
+
+if(pass !== repass){
+  errorEl.style.display = "block";
+  errorEl.innerText = "Mật khẩu nhập lại không khớp.";
+  return;
+}
+
+
+  // Khóa trạng thái nút tránh bấm liên tục nhiều lần
+  const regBtn = document.querySelector(".btn-primary");
+  const originalText = regBtn.innerText;
+  regBtn.innerText = "Đang xử lý...";
+  regBtn.disabled = true;
+
+// Tìm đến đoạn định nghĩa URL trong file JS của bạn và sửa thành:
+const baseUrl = "https://script.google.com/macros/s/AKfycbxEoH0B9tnS2CVoRhXS5trKfe5thL3Xiugf5_48ZWP-VXw0s7Wiwpq2mBhYY4W9hY90JQ/exec";
+
+
+const url =
+  `${baseUrl}?action=register` +
+  `&user=${encodeURIComponent(user)}` +
+  `&pass=${encodeURIComponent(pass)}`;
+
+  fetch(url)
+    .then(res => res.text())
+    .then(data => {
+      // Trả lại trạng thái cho nút bấm
+      regBtn.innerText = originalText;
+      regBtn.disabled = false;
+
+      console.log("SERVER:", data);
+
+      if(data.trim() === "OK"){
+        errorEl.style.display = "block";
+        errorEl.style.background = "rgba(29, 185, 84, 0.1)";
+        errorEl.style.borderColor = "#1db954";
+        errorEl.style.color = "#1db954";
+        errorEl.innerText = "Đăng ký thành công! Đang chuyển hướng...";
+        
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 1500);
+
+      } else if(data.trim() === "EXIST"){
+        errorEl.style.display = "block";
+        errorEl.style.background = "rgba(255, 77, 77, 0.1)";
+        errorEl.style.borderColor = "#ff4d4d";
+        errorEl.style.color = "#ff4d4d";
+        errorEl.innerText = "Tên tài khoản này đã tồn tại trên hệ thống.";
+      } else {
+        errorEl.style.display = "block";
+        errorEl.style.background = "rgba(255, 77, 77, 0.1)";
+        errorEl.style.borderColor = "#ff4d4d";
+        errorEl.style.color = "#ff4d4d";
+        errorEl.innerText = "Yêu cầu đăng ký bị từ chối từ máy chủ.";
+      }
+    })
+    .catch(() => {
+      regBtn.innerText = originalText;
+      regBtn.disabled = false;
+      errorEl.style.display = "block";
+      errorEl.style.background = "rgba(255, 77, 77, 0.1)";
+      errorEl.style.borderColor = "#ff4d4d";
+      errorEl.style.color = "#ff4d4d";
+      errorEl.innerText = "Mạng yếu hoặc không thể kết nối đến server.";
+    });
+}
+
+</script>
+
+</body>
+</html>

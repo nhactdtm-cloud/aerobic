@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Spotify Pro Max</title>
+  <!-- Chèn link ảnh logo chuẩn của bạn vào đây -->
+  <link rel="icon" type="image/png" href="img_cover/logo.jpg">
+
+<script>
+if (window.innerWidth <= 768) {
+  window.location.href = "mobile.html";
+}
+</script>
+<style>
+body {
+  margin: 0;
+  min-width: 1200px;
+  min-width: 1200px;
+  font-family: Arial;
+  background: #FDFBF7;
+  color: #212121;  /* THAY ĐỔI: Đổi từ trắng sang Chữ đen chì dịu mắt */
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+zoom: 0;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  flex-shrink:0;
+  width: 260px;
+  height: 100vh;
+  background: #1E4233; /* THAY ĐỔI: Đổi sang Nền xanh rêu đậm sang trọng */
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  overflow: hidden; /* QUAN TRỌNG */
+}
+
+/* LOGO (CỐ ĐỊNH) */
+.sidebar-header {
+  flex-shrink: 0;
+  padding-bottom: 10px;
+}
+
+.logo-box {
+  width: 140px;
+  height: 140px;
+  border-radius: 12px;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
+}
+
+/* DANH SÁCH ALBUM (CHỈ CHỖ NÀY SCROLL) */
+#albumFixed {
+  flex-shrink: 0;
+}
+
+#albumList {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 5px;
+}
+
+/* ẩn scrollbar nếu cần */
+#albumList::-webkit-scrollbar {
+  display: none;
+}
+
+/* XÓA HẲN THANH CUỘN TRÊN CHROME, SAFARI, EDGE, CỐC CỐC */
+#albumList::-webkit-scrollbar {
+  display: none;
+}
+
+/* SCROLLBAR */
+#albumList::-webkit-scrollbar {
+  width: 6px;
+}
+
+#albumList::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2); /* THAY ĐỔI: Scrollbar sidebar sáng lên trên nền tối */
+  border-radius: 10px;
+}
+
+#albumList::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+
+
+#speedError {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+/* ALBUM */
+.album {
+  padding: 10px;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.07); /* THAY ĐỔI: Dùng màu trong suốt trên nền xanh sidebar */
+  border-radius: 10px;
+  cursor: pointer;
+  color: #FFFFFF; /* THAY ĐỔI: Chữ màu trắng để nổi bật trên nền sidebar xanh */
+}
+
+.album:hover {
+  background: rgba(255, 255, 255, 0.15); /* THAY ĐỔI: Sáng lên khi hover */
+}
+
+.album.active {
+  background: #C84B31 !important; /* THAY ĐỔI: Album được chọn chuyển sang màu Đỏ gạch cực chất */
+  color: #FFFFFF !important;     /* THAY ĐỔI: Chữ chuyển sang trắng để dễ đọc trên nền đỏ gạch */
+}
+
+/* MAIN */
+.main {
+  flex: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+
+.content-scroll {
+  flex: 1;
+  min-width: 0;
+}
+
+.tile-box {
+  height: 100px;
+  background: #FDFBF7; /* THAY ĐỔI: Đồng bộ với màu nền trắng kem */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 23px;
+  flex-shrink: 0;
+  color: #212121; /* THAY ĐỔI: Chữ tiêu đề chính màu đen chì */
+}
+
+.content-scroll {
+  flex: 1;
+  max-height: 360px;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  /* Ẩn scrollbar (Firefox + IE/Edge cũ) */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Ẩn scrollbar cho Chrome, Edge, Safari */
+.content-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.content-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content-scroll::-webkit-scrollbar-thumb {
+  background: #1E4233; /* THAY ĐỔI: Scrollbar chính dùng màu xanh rêu */
+  border-radius: 10px;
+}
+
+.content-scroll::-webkit-scrollbar-thumb:hover {
+  background: #C84B31; /* THAY ĐỔI: Khi hover scrollbar đổi sang màu đỏ gạch của bạn */
+}
+
+/* TITLE */
+.tile-box h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+/* Sắp xếp các thành phần bên trong dòng bài hát theo hàng ngang */
+.song {
+  display: flex;
+  align-items: center;
+  gap: 15px; 
+  padding: 10px 15px;
+  margin-bottom: 8px;
+  background: #FFFFFF; /* THAY ĐỔI: Nền bài hát màu trắng tinh để nổi bật trên nền kem */
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid rgba(30, 66, 51, 0.05); /* THÊM: Viền mờ màu xanh rêu giúp khối bài hát sắc nét */
+}
+
+/* Định dạng cho số thứ tự bài hát */
+.song-index {
+  font-size: 14px;
+  color: #1E4233; /* THAY ĐỔI: Số thứ tự màu xanh rêu cho đồng bộ */
+  width: 20px; 
+  text-align: center;
+}
+
+.song-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0; /* Thêm dòng này để kích hoạt cắt chữ */
+  flex: 1;      /* Thêm dòng này để tên bài hát chiếm hết khoảng trống */
+}
+
+
+.song-item-title {
+  font-size: 15px;
+  font-weight: bold;
+  color: #212121; 
+
+  /* THÊM 3 DÒNG NÀY */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Tên ca sĩ */
+.song-item-artist {
+  font-size: 12px;
+  color: #555555; 
+
+  /* THÊM 3 DÒNG NÀY ĐỂ TÊN CA SĨ CŨNG KHÔNG BỊ TRÀN */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Khi bài hát đang phát (Đang active nền đỏ gạch) */
+.song.active {
+  background: #C84B31 !important; /* THAY ĐỔI: Dòng bài hát đang phát đổi sang Đỏ gạch nổi bật */
+}
+
+.song.active .song-item-title {
+  color: #FFFFFF !important; /* THAY ĐỔI: Tên bài hát chuyển sang màu trắng */
+}
+
+.song.active .song-index {
+  color: #FFFFFF !important; /* THAY ĐỔI: Số thứ tự chuyển sang màu trắng */
+}
+
+.song.active .song-item-artist {
+  color: rgba(255, 255, 255, 0.8) !important; /* THAY ĐỔI: Tên ca sĩ chuyển sang trắng mờ quyến rũ */
+}
+
+.user-box {
+  position: relative;
+}
+
+.user-menu{
+  display: none;
+  position: absolute;
+  top: 48px;
+  right: 0;
+
+  width: 220px;      /* giữ nguyên */
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgba(0,0,0,.15);
+  border: 1px solid #eee;
+
+  z-index: 99999;    /* nổi lên trên tất cả */
+}
+
+.user-menu.show{
+  display:block;
+  animation:menuFade .2s ease;
+}
+
+@keyframes menuFade{
+  from{
+    opacity:0;
+    transform:translateY(-8px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.user-name{
+  padding:16px;
+  font-size:15px;
+  font-weight:700;
+  color:#222;
+  cursor:pointer;
+  border-bottom:1px solid #eee;
+  background:linear-gradient(135deg,#FFF7F0,#FDFBF7);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.user-name:hover{
+  background:linear-gradient(135deg,#FFE9D6,#FFF7F0);
+}
+
+.user-menu button{
+  width:100%;
+  border:none;
+  background:none;
+  padding:12px 16px;
+  font-size:14px;
+  color:#333;
+  text-align:left;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.user-menu button:hover{
+  background:#F5F5F5;
+  padding-left:22px;
+}
+
+.user-menu button:not(:last-child){
+  border-bottom:1px solid #f2f2f2;
+}
+
+
+/* BACKGROUND */
+.bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  filter: blur(40px);
+  opacity: 0.15; /* THAY ĐỔI: Giảm độ mờ một chút để không làm bẩn nền trắng kem */
+  z-index: -1;
+  transform: scale(1.2);
+}
+
+#infoTitle {
+  font-size: 14px;
+  color: #555555; /* THAY ĐỔI: Chữ xám dễ nhìn trên nền sáng */
+}
+
+.filter-bar {
+  padding: 5px 15px;
+  background: #FDFBF7; /* THAY ĐỔI: Nền đồng bộ màu kem */
+  border-bottom: 1px solid rgba(30, 66, 51, 0.1); /* THAY ĐỔI: Đường viền mỏng mờ */
+}
+
+.filter-bar select {
+  background: #FFFFFF; /* THAY ĐỔI: Ô chọn màu trắng tinh */
+  color: #212121; /* THAY ĐỔI: Chữ trong ô màu đen chì */
+  border: 1px solid rgba(30, 66, 51, 0.2); /* THAY ĐỔI: Viền ô chọn */
+  padding: 5px 15px;
+  border-radius: 10px;
+  outline: none;
+  cursor: pointer;
+}
+
+#tempoBox {
+  display: flex;
+  margin-left: 20px;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.tempo {
+  width: 100%;
+  padding: 8px 10px;
+  background: rgba(30, 66, 51, 0.05); /* THAY ĐỔI: Nền mờ xanh rêu */
+  border-radius: 0px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 14px;
+  opacity: 0.5;
+  color: #212121; /* THAY ĐỔI: Chữ màu đen chì */
+}
+
+.tempo-btn:hover {
+  background: rgba(200, 75, 49, 0.15); /* THAY ĐỔI: Hover tạo vệt đỏ gạch mờ */
+  transform: scale(1.03);
+}
+
+.tempo.active {
+  opacity: 1;
+  color: #C84B31; /* THAY ĐỔI: Tempo đang active chuyển sang màu đỏ gạch */
+  font-size: 16px;
+  font-weight: bold;
+  transform: scale(1.1);
+}
+
+.title-area {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* 👈 chỉnh khoảng cách ở đây */
+  align-items: flex-start;
+}
+
+#userBtn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+
+  margin-right: 30px; /* ← đẩy sang trái */
+}
+
+#userAvatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid transparent;
+  transition: 0.2s;
+}
+
+#userBtn:hover #userAvatar {
+  border: 2px solid #C84B31;
+  transform: scale(1.05);
+}
+
+/* ← chỉnh khối vuông bên phải */
+
+.content-wrapper{
+  display:flex;
+  gap:15px;
+  align-items:stretch;
+}
+
+.right-box h3{
+  position:sticky;
+  top:0;
+
+  margin:-8px 0 15px;
+  padding:10px 0;
+
+  background:#1E4233;
+
+  font-size:16px;
+  color:#fff;
+
+  z-index:10;
+}
+
+.public-playlist{
+  padding:10px;
+  margin-bottom:8px;
+  background:rgba(255,255,255,.15);
+  border-radius:8px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.public-playlist:hover{
+  
+  background:rgba(0, 0, 0, 0.08);
+}
+
+.right-box {
+  flex-shrink:0;
+  width: 280px;
+  height: calc(100vh - 250px);
+  background: #1E4233;
+  margin-top: 10px;
+  margin-right: 20px;
+  padding: 0 15px 15px 15px;
+  
+  /* GIỮ NGUYÊN KHẢ NĂNG CUỘN DỮ LIỆU */
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  border-radius: 12px;
+  box-sizing: border-box;
+  color: #fff;
+
+  /* ẨN THANH TRƯỢT TRÊN TRÌNH DUYỆT FIREFOX */
+  scrollbar-width: none; 
+}
+
+/* ẨN THANH TRƯỢT TRÊN CHROME, SAFARI, EDGE VÀ CỐC CỐC */
+.right-box::-webkit-scrollbar {
+  display: none;
+}
+
+/* Sửa lại class có sẵn của bạn: Thêm thuộc tính flexbox */
+.public-playlist {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  padding: 10px;
+  margin-bottom: 8px;
+  background: rgba(255,255,255,.15);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+/* Định dạng khối chữ bên trong */
+.playlist-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+/* Định dạng nút ghim */
+.pin-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.35); /* Mặc định nút ghim có màu mờ ẩn đi */
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+  flex-shrink: 0; /* Không cho nút ghim bị bóp méo */
+}
+
+/* Hiệu ứng khi di chuột vào nút ghim */
+.pin-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+/* TRẠNG THÁI SAU KHI ĐÃ GHIM */
+.public-playlist.pinned {
+  background: rgba(255, 255, 255, 0.25); /* Làm hộp nhạc sáng lên */
+  border-left: 3px solid #000000; /* Thêm vạch màu vàng bên trái làm điểm nhấn */
+}
+
+.public-playlist.pinned .pin-btn {
+  color: #ffca28; /* Biến cái ghim thành màu vàng */
+  transform: rotate(-45deg); /* Xoay xiên cái ghim nhìn rất chuyên nghiệp */
+}
+
+
+
+.public-playlist.active{
+  background: #C84B31 !important;
+  color: #fff !important;
+}
+
+/* ===== AUTH BUTTONS ===== */
+#loginBtn,
+#registerBtn {
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(30, 66, 51, 0.25);
+  transition: all 0.2s ease;
+  margin-left: 6px;
+}
+
+/* Nút Đăng nhập */
+#loginBtn {
+  background: #1E4233;
+  color: #fff;
+}
+
+#loginBtn:hover {
+  background: #C84B31;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+/* Nút Đăng ký */
+#registerBtn {
+  background: transparent;
+  color: #1E4233;
+}
+
+#registerBtn:hover {
+  background: rgba(30, 66, 51, 0.08);
+  border-color: #1E4233;
+  transform: translateY(-1px);
+}
+
+#loginBtn, #registerBtn {
+  height: 36px;
+}
+
+#publicPlaylistBox {
+    display: block !important;
+    visibility: visible !important;
+    padding: 5px 0 !important;
+}
+
+/* Style chuẩn, chữ trắng/sáng để nổi bật trên nền tối của bạn */
+.public-playlist {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    background-color: rgba(255, 255, 255, 0.1) !important; /* Nền mờ sang trọng */
+    color: #ffffff !important;                            /* Ép chữ thành màu trắng hẳn */
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    margin: 8px 0 !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    transition: background 0.2s ease;
+}
+
+.public-playlist:hover {
+    background-color: rgba(255, 255, 255, 0.18) !important; /* Hiệu ứng sáng nhẹ khi di chuột vào */
+}
+
+/* Style cho nút ghim */
+.public-playlist .pin-btn {
+    background: none !important;
+    border: none !important;
+    font-size: 1.3rem !important;
+    cursor: pointer !important;
+    padding: 5px !important;
+}
+
+.song-title-link,
+.artist-link {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.song-title-link:hover,
+.artist-link:hover {
+  color: #000;
+  opacity: 0.7;
+}
+
+
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.hidden {
+  display: none;
+}
+
+.search-box{
+  position: relative;
+  width: 320px;
+}
+
+.search-box input{
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.1);
+  outline: none;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.search-box input:focus{
+  border-color: #1E4233;
+  box-shadow: 0 0 0 3px rgba(30,66,51,0.1);
+}
+
+.suggest-box{
+  position: absolute;
+  top: 45px;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  max-height: 300px;
+  overflow-y: auto;
+  display: none;
+  z-index: 9999;
+}
+
+.suggest-item{
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+}
+
+.suggest-item:hover{
+  background: #f5f5f5;
+}
+
+.suggest-title{
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.suggest-sub{
+  font-size: 12px;
+  color: #666;
+}
+
+.suggest-box{
+  display: none;
+  position: absolute;
+  top: 45px;
+  left: 0;
+  right: 0;
+  background: white;
+  z-index: 99999;
+}
+
+/* Tìm kiếm playlist */
+.public-search{
+    position: sticky;
+    top: 0;          /* thay vì 45px */
+    z-index: 999;
+    background:#1E4233;
+    padding:10px 0;
+}
+
+.public-search::before{
+    content:"";
+    position:absolute;
+    top:-12px;
+    left:0;
+    right:0;
+    bottom:0;
+    background:#1E4233;
+    z-index:-1;
+}
+.public-search input {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 20px; /* Bo tròn kiểu viên thuốc hiện đại */
+  border: 1px solid #e0e0e0;
+  outline: none;
+  font-size: 14px;
+  color: #333;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Đổ bóng nhẹ tạo độ nổi */
+  transition: all 0.3s ease; /* Hiệu ứng mượt mà khi tương tác */
+}
+
+/* Hiệu ứng khi di chuột vào */
+.public-search input:hover {
+  border-color: #b3b3b3;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Hiệu ứng khi nhấn vào để gõ chữ */
+.public-search input:focus {
+  border-color: #1db954; /* Màu xanh lá kiểu Spotify, bạn có thể đổi màu tùy ý */
+  box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.2); /* Viền mờ xung quanh */
+  background-color: #fff;
+}
+
+@keyframes pop {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+*{
+  box-sizing:border-box;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="bg" id="bg"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+  <div class="sidebar-header">
+    <img src="img_cover/logo.jpg" class="logo-box">
+  </div>
+
+<div id="albumFixed"></div>
+<div id="albumList"></div>
+
+<button id="backBtn" style="display:none; margin-top:10px;">
+  ← Quay lại
+</button>
+
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <div class="tile-box">
+  <div class="title-area">
+    <h2 id="albumTitle">Nhạc Thể Dục Thẩm Mỹ : Aerobic</h2>
+<!--  -->
+<div class="search-box">
+  <input
+    id="searchInput"
+    type="text"
+    placeholder="Tìm bài hát, nghệ sĩ..."
+    oninput="showSuggestions()"
+    autocomplete="off"
+  />
+
+  <div id="suggestBox" class="suggest-box"></div>
+</div>
+<!-- -->
+  </div>
+<div style="display: flex; gap: 8px; align-items: center; width: max-content;">
+
+<div class="user-box" id="userBox">
+
+  <!-- CHƯA LOGIN -->
+  <button id="loginBtn" onclick="handleLoginClick()">Đăng nhập</button>
+  <button id="registerBtn" onclick="handleRegisterClick()">Tạo tài khoản</button>
+
+  <!-- ĐÃ LOGIN -->
+<!-- ĐÃ LOGIN -->
+<button id="userBtn" style="display:none;" onclick="toggleUserMenu(event)">
+  <img id="userAvatar" src="data/avatar/avata.png" />
+</button>
+
+<div class="user-menu" id="userMenu">
+
+<div class="user-name" id="userNameLabel" onclick="loadMyLibrary();">
+    👋 Người dùng
+</div>
+  <button onclick="wallet()">💳 Thanh Toán</button>
+  <button onclick="window.location.href='profile.html'">👤 Hồ Sơ</button>
+  <button onclick="logout()">🚪 Đăng xuất</button>
+  
+<a id="uploadLink" href="https://onrender.com" target="_blank">
+  <button>Upload</button>
+</a>
+
+</div>
+
+</div>
+    
+
+</div>
+
+<script>
+  
+function checkUserSession() {
+  const name = localStorage.getItem("username");
+
+  const loginBtn = document.getElementById("loginBtn");
+  const registerBtn = document.getElementById("registerBtn");
+  const userBtn = document.getElementById("userBtn");
+  const userNameLabel = document.getElementById("userNameLabel");
+  const userAvatar = document.getElementById("userAvatar");
+
+  if (name) {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (registerBtn) registerBtn.style.display = "none";
+    if (userBtn) userBtn.style.display = "inline-block";
+
+    if (userNameLabel) userNameLabel.textContent = "👋 " + name;
+
+    // ĐƯỜNG DẪN GỐC (Dùng "." nếu chạy máy local, hoặc đổi thành link GitHub nếu muốn chạy online)
+    const BASE_PATH = "."; 
+    const USERS_JSON_URL = `${BASE_PATH}/data/users.json`;
+
+    // Gọi file users.json để lấy thông tin ảnh avatar của user đang đăng nhập
+    fetch(USERS_JSON_URL)
+      .then(res => {
+        if (!res.ok) throw new Error("Không thể tải file users.json");
+        return res.json();
+      })
+      .then(data => {
+        const users = data.users || [];
+        // Tìm đúng thông tin của user đang đăng nhập dựa vào biến 'name' trong localStorage
+        const currentUser = users.find(u => u.username === name);
+
+        if (currentUser && currentUser.avatar) {
+          // Xóa dấu gạch chéo dư thừa ở đầu đường dẫn ảnh nếu có
+          const cleanAvatarPath = currentUser.avatar.replace(/^\/+/, "");
+          // Gộp đường dẫn thành: ./data/avata/avatar_admin_1781412213598.png
+          userAvatar.src = `${BASE_PATH}/${cleanAvatarPath}`;
+        } else {
+          // Nếu user không có ảnh hoặc không tìm thấy user, dùng ảnh mặc định
+          userAvatar.src = "data/avatar/avata.png";
+        }
+      })
+      .catch(err => {
+        console.error("Lỗi lấy avatar từ users.json:", err);
+        if (userAvatar) userAvatar.src = "img_cover/logo.jpg";
+      });
+
+  } else {
+    // Trường hợp chưa đăng nhập thì ẩn nút user và hiện lại nút login/register
+    if (loginBtn) loginBtn.style.display = "inline-block";
+    if (registerBtn) registerBtn.style.display = "inline-block";
+    if (userBtn) userBtn.style.display = "none";
+
+    if (userNameLabel) userNameLabel.textContent = "👋 Người dùng";
+  }
+}
+
+function toggleUserMenu(e) {
+  e?.stopPropagation();
+  document.getElementById("userMenu")?.classList.toggle("show");
+}
+
+document.addEventListener("click", (e) => {
+  if (!document.getElementById("userBtn")?.contains(e.target)) {
+    document.getElementById("userMenu")?.classList.remove("show");
+  }
+});
+
+
+
+
+window.addEventListener("load", checkUserSession);
+
+// Hàm xử lý khi nhấn nút Đăng nhập / Đăng xuất
+function handleLoginClick() {
+    const name = localStorage.getItem("username");
+    if (name) {
+        // Nếu đã đăng nhập thì hành động bấm nút này là ĐĂNG XUẤT
+        localStorage.removeItem("loggedIn");
+        localStorage.removeItem("username");
+        window.location.reload(); // Tải lại trang để cập nhật giao diện
+    } else {
+        // Nếu chưa đăng nhập thì chuyển hướng đến trang login
+        window.location.href = "login.html";
+    }
+}
+
+// Hàm xử lý khi nhấn nút Tạo tài khoản
+function handleRegisterClick() {
+    window.location.href = "register.html";
+}
+
+
+function goProfile(){
+  const username = localStorage.getItem("username");
+
+  if(!username){
+    window.location.href = "login.html";
+    return;
+  }
+
+  window.location.href = "profile.html?user=" + encodeURIComponent(username);
+}
+
+function wallet(){
+  const username = localStorage.getItem("username");
+
+  if(!username){
+    window.location.href = "wallet.html";
+    return;
+  }
+
+  window.location.href = "wallet.html?user=" + encodeURIComponent(username);
+}
+
+// Tự động chạy kiểm tra ngay khi trình duyệt tải xong đoạn code này
+checkUserSession();
+</script>
+   
+
+<script>
+function handleUserClick(){
+  if(localStorage.getItem("loggedIn") === "true"){
+    logout();
+  } else {
+    window.location.href = "login.html";
+  }
+}
+
+// Khi khách bấm nút Tạo Bộ Sưu Tập
+document.addEventListener("click", function (e) {
+
+  const album = e.target.closest(".album");
+  const playlist = e.target.closest(".public-playlist");
+
+  // =====================
+  // CLICK ALBUM
+  // =====================
+  if (album) {
+
+    // reset playlist
+    document.querySelectorAll(".public-playlist.active")
+      .forEach(el => el.classList.remove("active"));
+
+    // reset album cũ
+    document.querySelectorAll(".album.active")
+      .forEach(el => el.classList.remove("active"));
+
+    album.classList.add("active");
+    return;
+  }
+
+  // =====================
+  // CLICK PLAYLIST
+  // =====================
+  if (playlist) {
+
+    // reset album
+    document.querySelectorAll(".album.active")
+      .forEach(el => el.classList.remove("active"));
+
+    // reset playlist cũ
+    document.querySelectorAll(".public-playlist.active")
+      .forEach(el => el.classList.remove("active"));
+
+    playlist.classList.add("active");
+    return;
+  }
+});
+
+function resetUIState() {
+  document.querySelectorAll(".album.active")
+    .forEach(el => el.classList.remove("active"));
+
+  document.querySelectorAll(".public-playlist.active")
+    .forEach(el => el.classList.remove("active"));
+}
+
+
+
+function logout(){
+  localStorage.removeItem("loggedIn");
+  localStorage.removeItem("username");
+
+  window.location.href = "index.html";
+}
+
+//== Back
+const backBtn = document.getElementById("backBtn");
+
+backBtn.onclick = () => {
+  location.reload(); // Tải lại trang từ đầu
+};
+
+
+//== Gửi info sang node ( Render)
+const username = localStorage.getItem("username") || "";
+
+document.getElementById("uploadLink").href =
+  "https://upload-6s1u.onrender.com?username=" +
+  encodeURIComponent(username);
+
+
+</script>
+</div>
+
+<div class="content-wrapper">
+
+  <div class="content-scroll">
+    <div class="filter-bar">
+
+    </div>
+
+    <div id="songList"></div>
+  </div>
+
+<!-- Ép hiển thị toàn bộ vùng chứa công khai -->
+<div id="publicPlaylists" style="display: block !important;">
+    <div class="right-box" style="display: block !important;">
+
+<!--  -->
+<h3>🌍 Bộ sưu tập công khai</h3>
+
+<div class="public-search">
+  <input id="publicSearchInput" type="text" placeholder="Tìm playlist..." oninput="filterPublicPlaylists()">
+</div>
+
+<div id="publicPlaylistBox"></div>
+
+<!--  -->
+    </div>
+</div>
+
+</div>
+
+</div>
+
+
+
+<div class="error" id="speedError" style="display:none;">
+  Bạn cần đăng nhập để thay đổi TEMPO
+</div>
+
+<script>
+if (localStorage.getItem("loggedIn") !== "true") {
+  speedError.style.display = "block";
+  setTimeout(() => speedError.style.display = "none", 30000);
+}
+
+
+
+
+</script>
+
+
+
+<script src="user-playlist.js"></script>
+<script src="music.js"></script>
+<script src="player.js"></script>
+
+<script>
+window.addEventListener("load", () => {
+  console.log("PAGE LOADED → CHECKIN");
+  sendCheckin();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trang cá nhân</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: Arial, sans-serif;
+}
+
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: linear-gradient(135deg,#fdfbf7,#f2f2f2);
+}
+
+/* CARD */
+.profile-card{
+  width:400px;
+  background:#fff;
+  border-radius:28px;
+  overflow:hidden;
+  box-shadow:0 20px 50px rgba(0,0,0,.12);
+  transform: translateY(0);
+  transition:.3s;
+}
+
+.profile-card:hover{
+  transform: translateY(-4px);
+}
+
+/* COVER */
+.cover{
+  height:150px;
+  background: linear-gradient(135deg,#C84B31,#ff8a65);
+}
+
+/* CONTENT */
+.profile-content{
+  padding:22px;
+  text-align:center;
+  margin-top:-70px;
+}
+
+/* AVATAR */
+.profile-avatar{
+  width:130px;
+  height:130px;
+  border-radius:50%;
+  object-fit:cover;
+  border:5px solid #fff;
+  box-shadow:0 10px 25px rgba(0,0,0,.15);
+  transition:.3s;
+}
+
+.profile-avatar:hover{
+  transform: scale(1.05);
+}
+
+/* NAME */
+.profile-name{
+  margin-top:12px;
+  font-size:24px;
+  color:#222;
+  font-weight:700;
+}
+
+/* INFO BOX */
+.profile-info{
+  margin-top:18px;
+  background:#fafafa;
+  padding:15px;
+  border-radius:16px;
+  text-align:left;
+}
+
+.info-row{
+  display:flex;
+  justify-content:space-between;
+  padding:10px 0;
+  border-bottom:1px solid #eee;
+  font-size:14px;
+}
+
+.info-row:last-child{
+  border-bottom:none;
+}
+
+.info-row span{
+  color:#777;
+}
+
+.info-row strong{
+  color:#222;
+}
+
+/* BUTTONS */
+.actions{
+  display:flex;
+  gap:10px;
+  margin-top:15px;
+}
+
+.btn,
+.edit-profile-btn{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:999px;
+  cursor:pointer;
+  font-weight:600;
+  transition:.3s;
+}
+
+.btn-secondary{
+  background:#f3f3f3;
+}
+
+.btn-secondary:hover{
+  background:#e6e6e6;
+}
+
+.edit-profile-btn{
+  background:#C84B31;
+  color:#fff;
+}
+
+.edit-profile-btn:hover{
+  background:#a63d28;
+}
+
+/* SONG LIST */
+#mySongsBox{
+  margin-top:10px;
+  max-height:260px;
+  overflow:auto;
+  border-radius:12px;
+  border:1px solid #eee;
+}
+
+.song-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.song-item:hover{
+  background:#fff5f2;
+}
+
+/* SHARE */
+.share-action{
+  margin:10px 0;
+}
+
+/* SELECT */
+select{
+  margin-top:10px;
+  padding:6px 10px;
+  border-radius:8px;
+  border:1px solid #ddd;
+}
+
+</style>
+</head>
+
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
+
+<body>
+
+<div class="profile-card">
+
+  <div class="cover"></div>
+  
+  <div class="profile-content">
+    
+    <div class="avatar-wrapper">
+      <img
+        id="avatar"
+        class="profile-avatar"
+        src="data/avatar/avata.png"
+        alt="Avatar"
+      >
+
+      <input
+        type="file"
+        id="avatarInput"
+        accept="image/*"
+        hidden
+      >
+    </div>
+
+    <h2 id="username" class="profile-name">Người dùng</h2>
+    
+    <div class="profile-info">
+
+      <div class="info-row">
+        <span>👤 Họ và tên</span>
+        <strong id="fullname">Đang tải...</strong>
+      </div>
+
+      <div class="info-row">
+        <span>🎂 Ngày sinh</span>
+        <strong id="birthday">Đang tải...</strong>
+      </div>
+
+      <div class="info-row">
+        <span>⚧ Giới tính</span>
+        <strong id="gender">Đang tải...</strong>
+      </div>
+
+      <div class="info-row">
+        <span>📧 Email</span>
+        <strong id="email">Đang tải...</strong>
+      </div>
+
+    </div>
+
+<p id="userid" class="profile-id" style="display:none">@guest</p>
+
+    <!-- Nút chia sẻ trang cá nhân -->
+    <div class="share-action" style="margin-bottom: 15px;">
+      <button class="btn btn-secondary" onclick="shareProfile()" style="padding: 5px 10px; font-size: 13px; cursor: pointer;">
+        🔗 Sao chép link chia sẻ
+      </button>
+    </div>
+
+  <h3 style="margin-top:20px;">🎵 Nhạc của tôi</h3>
+
+  <select id="filterType" onchange="loadMySongs()">
+    <option value="all">Tất cả</option>
+    <option value="public">Công khai</option>
+    <option value="private">Cá nhân</option>
+  </select>
+
+  <div id="mySongsBox"></div>
+
+    <!-- ẨN HOẶC HIỆN NÚT CHỨC NĂNG DỰA VÀO QUYỀN SỞ HỮU -->
+    <div id="ownerActions" class="actions" style="display: none;">
+      <button class="edit-profile-btn" onclick="toggleEdit()">
+        ✏️ Chỉnh sửa hồ sơ
+      </button>
+
+      <button class="btn btn-secondary" onclick="openPasswordModal()">
+        🔒 Đổi mật khẩu
+      </button>
+    </div>
+
+
+
+  </div>
+
+</div>
+
+<script>
+// --- 1. XỬ LÝ LẤY ID TỪ URL ĐỂ CÁ NHÂN HÓA VÀ CHIA SẺ ---
+const urlParams = new URLSearchParams(window.location.search);
+const targetUser = urlParams.get('id'); // Lấy ?id=... từ URL
+
+// Người dùng đang đăng nhập máy này
+const loggedInUser = localStorage.getItem("username") || "Người dùng";
+const loggedInUserid = localStorage.getItem("userid") || "@guest";
+
+// Xác định xem đang xem hồ sơ của ai
+// Nếu không có ?id trên URL -> Xem chính mình. Nếu có -> Xem người khác.
+const isOwner = !targetUser || targetUser === loggedInUser;
+const viewUsername = targetUser ? targetUser : loggedInUser;
+
+// Hiển thị tạm thời trước khi tải dữ liệu từ Server
+document.getElementById("username").textContent = viewUsername;
+document.getElementById("userid").textContent = targetUser ? `@${targetUser}` : loggedInUserid;
+
+// Nếu là chính chủ thì mới hiện cụm nút Sửa hồ sơ / Đổi mật khẩu
+if (isOwner) {
+  document.getElementById("ownerActions").style.display = "flex";
+}
+
+// Thay đổi 2 dòng đầu này để lấy dữ liệu từ máy của bạn, không gọi ra GitHub nữa
+const GITHUB_URL = "./data/users.json"; 
+const GITHUB_BASE = "./"; 
+
+// --- LOAD THÔNG TIN HỒ SƠ ---
+fetch(GITHUB_URL)
+  .then(r => {
+    if (!r.ok) throw new Error("Không thể tải file json nội bộ");
+    return r.json();
+  })
+  .then(data => {
+    const users = data.users || [];
+
+    // tìm user theo username trên URL
+    const user = users.find(u => u.username === viewUsername);
+
+    if (!user) {
+      alert("Không tìm thấy thông tin người dùng này.");
+      return;
+    }
+
+    // FULL NAME
+    document.getElementById("fullname").textContent =
+      user.fullName || "Chưa cập nhật";
+
+    // GENDER
+    document.getElementById("gender").textContent =
+      user.gender || "Chưa cập nhật";
+
+    // USERNAME
+    document.getElementById("username").textContent =
+      user.username || viewUsername;
+
+    // EMAIL
+    document.getElementById("email").textContent =
+      user.email || "Chưa cập nhật";
+
+    // USER ID
+    document.getElementById("userid").textContent =
+      user.id ? `@${user.id}` : `@${user.username}`;
+
+    // BIRTHDAY (tách từ object day/month/year)
+    let birthday = "Chưa cập nhật";
+    if (user.birthday && user.birthday.day) {
+      birthday =
+        `${user.birthday.day}/${user.birthday.month}/${user.birthday.year}`;
+    }
+    document.getElementById("birthday").textContent = birthday;
+
+    // AVATAR (Lấy tương đối từ thư mục máy của bạn)
+    if (user.avatar) {
+      const cleanPath = user.avatar.replace(/^\/+/, "");
+      document.getElementById("avatar").src = GITHUB_BASE + cleanPath;
+    } else {
+      // Đường dẫn ảnh mặc định nội bộ nếu không có mạng
+      document.getElementById("avatar").src = "data/avatar/avata.png"; 
+    }
+  })
+  .catch(err => console.error("Lỗi tải dữ liệu nội bộ:", err));
+
+
+
+// --- 3. HÀM CHIA SẺ LINK TẠO TỰ ĐỘNG ---
+function shareProfile() {
+  // Tạo link dạng: https://ten-mien-cua-ban.com
+  const shareUrl = `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(viewUsername)}`;
+  
+  navigator.clipboard.writeText(shareUrl).then(() => {
+    alert(`Đã sao chép liên kết hồ sơ của @${viewUsername} vào bộ nhớ tạm!`);
+  }).catch(() => {
+    alert("Không thể sao chép tự động. Hãy sao chép link này: " + shareUrl);
+  });
+}
+
+// --- 4. TẢI ẢNH ĐẠI DIỆN (CHỈ CHO PHÉP NẾU LÀ CHÍNH CHỦ) ---
+const avatar = document.getElementById("avatar");
+const avatarInput = document.getElementById("avatarInput");
+
+avatar.addEventListener("click", () => {
+  if (!isOwner) return; // Không phải chính chủ thì không cho kích hoạt chọn file
+  avatarInput.click();
+});
+
+avatarInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  if (file.size > 2 * 1024 * 1024) {
+    alert("Ảnh quá lớn! Chọn ảnh dưới 2MB.");
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = async (event) => {
+
+    // 👇 GAS_URL đặt ngay trong hàm
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxEoH0B9tnS2CVoRhXS5trKfe5thL3Xiugf5_48ZWP-VXw0s7Wiwpq2mBhYY4W9hY90JQ/exec";
+
+    const base64 = event.target.result;
+
+    try {
+      const res = await fetch(GAS_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain"
+        },
+        body: JSON.stringify({
+          action: "uploadAvatar",
+          user: loggedInUser,
+          image: base64,
+          name: file.name
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.status === "OK") {
+        avatar.src = data.url;
+        alert("Upload avatar thành công!");
+      } else {
+        alert("Upload thất bại: " + data.message);
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert("Lỗi kết nối server");
+    }
+  };
+
+  reader.readAsDataURL(file);
+});
+
+
+// Sửa Hồ Sơ
+let editing = false;
+// Biến trung gian để lưu trạng thái dữ liệu cũ trước khi sửa
+let oldData = {};
+
+function toggleEdit() {
+  if (!isOwner) return;
+
+  editing = !editing;
+
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbxEoH0B9tnS2CVoRhXS5trKfe5thL3Xiugf5_48ZWP-VXw0s7Wiwpq2mBhYY4W9hY90JQ/exec";
+  const fields = ["fullname", "email"];
+
+  const birthday = document.getElementById("birthday");
+  const genderEl = document.getElementById("gender");
+  const btn = document.querySelector(".edit-profile-btn");
+
+  if (editing) {
+    // --- CHẾ ĐỘ BẬT CHỈNH SỬA ---
+    
+    // [A] Lưu lại toàn bộ giá trị cũ trước khi cho người dùng sửa
+    oldData = {
+      fullname: document.getElementById("fullname")?.textContent.trim() || "",
+      email: document.getElementById("email")?.textContent.trim() || "",
+      birthday: birthday.textContent.trim(),
+      gender: genderEl.textContent.trim()
+    };
+
+    // [B] Kích hoạt contentEditable cho văn bản
+    fields.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.contentEditable = true;
+      el.classList.add("editing");
+    });
+
+    // [C] Xử lý ngày sinh
+    let oldDateStr = oldData.birthday;
+    if (oldDateStr === "Chưa cập nhật" || oldDateStr === "") {
+      oldDateStr = "";
+    }
+
+    birthday.innerHTML = `<input id="birthdayInput" class="date-input" type="text" placeholder="Chọn ngày sinh">`;
+    
+    try {
+      flatpickr("#birthdayInput", {
+        dateFormat: "d/m/Y",
+        defaultDate: oldDateStr,
+        allowInput: true
+      });
+    } catch (e) {
+      console.warn("Flatpickr bị chặn cấu hình cục bộ do trình duyệt:", e);
+    }
+
+    // [D] Biến trường giới tính thành dropdown
+    genderEl.innerHTML = `
+      <select id="genderSelect" class="gender-select">
+        <option value="Nam" ${oldData.gender === "Nam" ? "selected" : ""}>Nam</option>
+        <option value="Nữ" ${oldData.gender === "Nữ" ? "selected" : ""}>Nữ</option>
+        <option value="Không xác định" ${oldData.gender === "Không xác định" || oldData.gender === "Chưa cập nhật" || !oldData.gender ? "selected" : ""}>Không xác định</option>
+      </select>
+    `;
+
+    btn.innerHTML = "💾 Lưu hồ sơ";
+
+  } else {
+    // --- CHẾ ĐỘ LƯU DỮ LIỆU ---
+
+    // Lấy dữ liệu mới từ giao diện
+    const newFullname = document.getElementById("fullname")?.textContent.trim() || "";
+    const newEmail = document.getElementById("email")?.textContent.trim() || "";
+    
+    const birthdayInputEl = document.getElementById("birthdayInput");
+    const newBirthday = birthdayInputEl ? birthdayInputEl.value.trim() : "";
+    
+    const genderSelectEl = document.getElementById("genderSelect");
+    const selectedGender = genderSelectEl ? genderSelectEl.value : "Không xác định";
+
+    // Tắt chế độ chỉnh sửa của văn bản
+    fields.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.contentEditable = false;
+      el.classList.remove("editing");
+    });
+
+    // Gán lại text hiển thị thuần túy cho giao diện
+    birthday.textContent = newBirthday || "Chưa cập nhật";
+    genderEl.textContent = selectedGender;
+    btn.innerHTML = "✏️ Chỉnh sửa hồ sơ";
+
+    // Kiểm tra xem có bất kỳ trường dữ liệu nào thay đổi không
+    const isChanged = 
+      newFullname !== oldData.fullname ||
+      newEmail !== oldData.email ||
+      newBirthday !== (oldData.birthday === "Chưa cập nhật" ? "" : oldData.birthday) ||
+      selectedGender !== oldData.gender;
+
+    // NẾU KHÔNG CÓ THAY ĐỔI -> Kết thúc hàm tại đây (Không gửi fetch, không alert)
+    if (!isChanged) {
+      return; 
+    }
+
+    // NẾU CÓ THAY ĐỔI -> Thực hiện gọi fetch gửi sang Google Apps Script
+    fetch(
+      `${GAS_URL}?action=updateProfile`
+      + `&user=${encodeURIComponent(loggedInUser)}`
+      + `&fullname=${encodeURIComponent(newFullname)}`
+      + `&birthday=${encodeURIComponent(newBirthday)}`
+      + `&gender=${encodeURIComponent(selectedGender)}`
+      + `&email=${encodeURIComponent(newEmail)}`
+    )
+    .then(r => r.text())
+    .then(res => {
+      if (res.trim() === "OK") {
+        alert("Đã lưu hồ sơ thành công");
+      } else {
+        alert("Lưu thất bại: Server phản hồi " + res);
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Lỗi khi kết nối server: " + err.message);
+    });
+  }
+}
+
+
+
+
+// --- 6. ĐỔI MẬT KHẨU (ĐÃ SỬA LỖI ĐỌC STREAM TRÙNG LẶP) ---
+function openPasswordModal(){
+  if (!isOwner) return;
+  document.getElementById("passwordModal").style.display = "flex";
+}
+
+function closePasswordModal(){
+  document.getElementById("passwordModal").style.display = "none";
+}
+
+async function changePassword(){
+  if (!isOwner) return;
+
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbxEoH0B9tnS2CVoRhXS5trKfe5thL3Xiugf5_48ZWP-VXw0s7Wiwpq2mBhYY4W9hY90JQ/exec"; 
+
+  const oldPass = document.getElementById("oldPass").value.trim();
+  const newPass = document.getElementById("newPass").value.trim();
+
+  if(!oldPass || !newPass){
+    alert("Nhập đầy đủ mật khẩu");
+    return;
+  }
+
+  try {
+    const res = await fetch(GAS_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "changePassword",
+        user: loggedInUser,
+        oldPass: oldPass,
+        newPass: newPass
+      })
+    });
+
+    // ĐÃ SỬA: Chỉ đọc dưới dạng text vì backend của bạn đang trả về chuỗi trực tiếp "OK" hoặc "WRONG"
+    const result = await res.text(); 
+
+    if(result === "OK"){
+      alert("Đổi mật khẩu thành công");
+      closePasswordModal();
+      document.getElementById("oldPass").value = "";
+      document.getElementById("newPass").value = "";
+    }else if(result === "WRONG"){
+      alert("Mật khẩu cũ không đúng");
+    }else{
+      alert("Đổi mật khẩu thất bại: " + result);
+    }
+  } catch(e) {
+    console.error(e);
+    alert("Đã xảy ra lỗi hệ thống.");
+  }
+}
+
+async function loadMySongs() {
+  const username = localStorage.getItem("username") || "guest";
+
+  const res = await fetch("data/songs.json");
+  const albums = await res.json();
+
+  const allSongs = albums.flatMap(a => a.songs || []);
+
+  const mySongs = allSongs.filter(s =>
+    s &&
+    typeof s.username === "string" &&
+    typeof s.visibility === "string" &&
+    s.username === username
+  );
+
+  const box = document.getElementById("mySongsBox");
+  box.innerHTML = "";
+
+  if (mySongs.length === 0) {
+    box.innerHTML = "<p>Chưa có bài hát hợp lệ 🎵</p>";
+    return;
+  }
+
+  mySongs.forEach(s => {
+    const div = document.createElement("div");
+    div.className = "song-item"; // Thêm class để dễ quản lý
+    // Lưu lại thuộc tính file để hàm play đối chiếu thay đổi icon
+    div.setAttribute("data-file", s.file); 
+
+    div.style.padding = "8px 10px";
+    div.style.borderBottom = "1px solid #eee";
+    div.style.cursor = "pointer";
+    div.style.display = "flex";
+    div.style.alignItems = "center";
+    div.style.justifyContent = "space-between";
+
+    // Khối thông tin bài hát bên trái
+    const infoDiv = document.createElement("div");
+    infoDiv.style.display = "flex";
+    infoDiv.style.alignItems = "center";
+    infoDiv.style.gap = "10px";
+    infoDiv.innerHTML = `
+      <img src="${s.cover}" style="width:45px;height:45px;border-radius:8px;object-fit:cover;">
+      <div>
+        <div style="font-weight:bold;">${s.title}</div>
+        <div style="font-size:12px;color:#666;">${s.artist} • ${s.visibility}</div>
+      </div>
+    `;
+    div.appendChild(infoDiv);
+
+    // Nút trạng thái bên phải (Mặc định hiển thị nút Play)
+    const statusBtn = document.createElement("span");
+    statusBtn.className = "status-icon";
+    statusBtn.innerText = "▶";
+    statusBtn.style.fontSize = "16px";
+    statusBtn.style.color = "#C84B31";
+    div.appendChild(statusBtn);
+
+    // CHỈ gán sự kiện click vào thẻ div cha (loại bỏ click đúp ở nút con)
+    div.onclick = () => {
+      if (typeof play === "function") {
+        play(s);
+      }
+    };
+
+    box.appendChild(div);
+  });
+}
+
+
+function play(song) {
+  const audio = document.getElementById("audioPlayer"); 
+  
+  if (!audio) {
+    console.error("Lỗi: Không tìm thấy phần tử <audio id='audioPlayer'>!");
+    return;
+  }
+  if (!song || !song.file) {
+    console.warn("Lỗi: Bài hát không có file nhạc hợp lệ.");
+    return;
+  }
+
+  // Nếu bấm lại vào đúng bài đang chạy -> Tạm dừng nhạc
+  if (audio.src === window.location.origin + "/" + song.file || audio.src === song.file) {
+    if (!audio.paused) {
+      audio.pause();
+      updatePlayIcons(null); // Đổi tất cả icon về nút ▶
+      return;
+    }
+  }
+
+  try {
+    // Dừng luồng cũ để nạp luồng mới an toàn
+    audio.pause();
+    audio.src = song.file;
+
+    const playPromise = audio.play();
+
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          console.log("▶️ Đang phát thành công bài:", song.title);
+          // Cập nhật giao diện: Đổi icon bài này thành ⏸ (Đang phát)
+          updatePlayIcons(song.file);
+        })
+        .catch(err => {
+          console.warn("⚠️ Trình duyệt chặn phát nhạc tự động:", err.message);
+        });
+    }
+  } catch (err) {
+    console.error("❌ Lỗi thực thi hàm play():", err);
+  }
+}
+
+// HÀM PHỤ TRỢ: Cập nhật biểu tượng nút bấm dựa theo trạng thái bài hát
+function updatePlayIcons(currentPlayingFile) {
+  const songItems = document.querySelectorAll(".song-item");
+  
+  songItems.forEach(item => {
+    const itemFile = item.getAttribute("data-file");
+    const iconSpan = item.querySelector(".status-icon");
+    
+    if (iconSpan) {
+      if (itemFile === currentPlayingFile) {
+        iconSpan.innerText = "⏸"; // Biểu tượng đang phát (Pause)
+        item.style.background = "#fff5f2"; // Đổi màu nền nhẹ cho bài đang chạy
+      } else {
+        iconSpan.innerText = "▶"; // Trả về nút Play cho các bài khác
+        item.style.background = "transparent";
+      }
+    }
+  });
+}
+
+
+loadMySongs();
+
+
+</script>
+
+<!-- MODAL ĐỔI MẬT KHẨU -->
+<div id="passwordModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); justify-content:center; align-items:center; z-index:9999;">
+  <div style="background:white; width:320px; padding:20px; border-radius:16px;">
+    <h3 style="margin-bottom:15px; color: #333;">🔒 Đổi mật khẩu</h3>
+    <input id="oldPass" type="password" placeholder="Mật khẩu cũ" style="width:100%;padding:10px;margin-bottom:10px; border: 1px solid #ccc; border-radius: 4px;">
+    <input id="newPass" type="password" placeholder="Mật khẩu mới" style="width:100%;padding:10px;margin-bottom:15px; border: 1px solid #ccc; border-radius: 4px;">
+    <div style="display:flex;gap:10px">
+
+
+<button
+onclick="changePassword()"
+style="
+flex:1;
+padding:10px;
+border:none;
+background:#C84B31;
+color:white;
+border-radius:8px;
+cursor:pointer;
+">
+Lưu
+</button>
+
+<button
+onclick="closePasswordModal()"
+style="
+flex:1;
+padding:10px;
+border:none;
+background:#eee;
+border-radius:8px;
+cursor:pointer;
+">
+Hủy
+</button>
+
+</div>
+
+</div>
+</div>
+
+<audio id="audioPlayer" controls style="width:100%; display:none;"></audio>
+</body>
+
+</html>

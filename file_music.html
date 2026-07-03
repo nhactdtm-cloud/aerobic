@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AeroBeat Player</title>
+
+<link rel="preconnect" href="https://googleapis.com">
+<link href="https://googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#FDFBF7;
+  --primary:#1E4233;
+  --accent:#C84B31;
+  --text:#212121;
+  --card:#FFFFFF;
+  --border:#E6DDD2;
+  --shadow:0 8px 24px rgba(0,0,0,.08);
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* BACKGROUND BLUR */
+.bg-blur{
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  background-size:cover;
+  background-position:center;
+  filter:blur(80px);
+  transform:scale(1.15);
+  opacity:.15;
+  transition: background-image 0.5s ease;
+}
+
+.bg-overlay{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  background: linear-gradient(to bottom, rgba(253,251,247,.2), rgba(253,251,247,.9), #FDFBF7);
+}
+
+.page{
+  width:100%;
+  max-width:600px; /* Thu gọn vừa tầm mắt của một trình phát nhạc */
+  margin:auto;
+  padding:40px 20px;
+}
+
+.player-container {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 32px;
+  padding: 30px;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+/* COVER */
+.cover-wrapper {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto 25px auto;
+}
+
+.cover{
+  width:100%;
+  aspect-ratio:1;
+  object-fit:cover;
+  border-radius:24px;
+  border:6px solid white;
+  box-shadow: 0 15px 40px rgba(0,0,0,.1);
+}
+
+/* INFO */
+.song-info{
+  margin-bottom: 25px;
+}
+
+.badge{
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius:999px;
+  background:#F4E2DD;
+  color:var(--accent);
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:15px;
+  text-transform: uppercase;
+}
+
+#title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+#artist {
+  font-size: 15px;
+  color: #666;
+  font-weight: 500;
+}
+
+#mota {
+  font-size: 13px;
+  color: #888;
+  margin-top: 10px;
+  white-space: pre-line; /* Giúp hiển thị xuống dòng của mô tả */
+}
+
+/* AUDIO & BUTTONS */
+audio {
+  width: 100%;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+.share-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: .2s;
+  box-shadow: 0 4px 12px rgba(30,66,51,0.2);
+}
+
+.share-btn:hover {
+  background: #153024;
+  transform: translateY(-1px);
+}
+</style>
+</head>
+
+<body>
+
+<div id="bgBlur" class="bg-blur"></div>
+<div class="bg-overlay"></div>
+
+<div class="page">
+    <div class="player-container">
+        
+        <div class="cover-wrapper">
+            <img id="cover" class="cover" src="https://picsum.photos" alt="Cover">
+        </div>
+
+        <div class="song-info">
+            <span id="badge" class="badge">AeroBeat</span>
+            <h1 id="title">Đang tải bài hát...</h1>
+            <p id="artist">Vui lòng chờ</p>
+            <p id="mota"></p>
+        </div>
+
+        <audio id="audio" controls autoplay></audio>
+
+        <button class="share-btn">🔗 Chia sẻ bài hát này</button>
+        
+    </div>
+</div>
+
+<script>
+// Biến lưu trữ dữ liệu bài hát hiện tại sau khi tìm thấy bằng Key ID
+let songData = null;
+
+// Lấy các thẻ HTML để chuẩn bị đổ dữ liệu
+const audioPlayer = document.getElementById("audio");
+const coverImg = document.getElementById("cover");
+const songTitle = document.getElementById("title");
+const songArtist = document.getElementById("artist");
+const songBadge = document.getElementById("badge");
+const songMota = document.getElementById("mota");
+const bgBlur = document.getElementById("bgBlur");
+const shareButton = document.querySelector(".share-btn");
+
+
+// Hàm xử lý đổ dữ liệu chi tiết của bài nhạc từ file JSON ra giao diện web
+function renderSongToUI(song) {
+    if (!song) return;
+    
+    songData = song; // Gán vào biến global cho nút chia sẻ lấy dữ liệu
+
+    // Cập nhật các trường thông tin dựa vào các từ khóa (Key) trong file JSON của bạn
+    if (songTitle) songTitle.textContent = song.title;
+    if (songArtist) songArtist.textContent = song.artist || "DJ Master Bi";
+    if (coverImg) coverImg.src = song.cover;
+    if (audioPlayer) audioPlayer.src = song.file;
+    if (bgBlur) bgBlur.style.backgroundImage = `url('${song.cover}')`;
+    
+    // Lấy mã thể loại (isrc) thay vào badge cho đẹp mắt
+    if (songBadge) songBadge.textContent = song.isrc || "AeroBeat";
+    
+    // Nếu bài nhạc có mô tả (mota_text) thì hiển thị ra, không thì ẩn đi
+    if (songMota) {
+        songMota.textContent = song.mota_text || "";
+    }
+
+    // Đổi tên thẻ tab trình duyệt
+    document.title = `${song.title} - AeroBeat`;
+}
+
+// Hàm quét dữ liệu từ songs.json bằng Key ID động
+async function loadSongById(targetId) {
+    try {
+        // TỰ ĐỘNG ĐỊNH VỊ THƯ MỤC CHA VÀ ĐI VÀO THƯ MỤC DATA
+        const currentDir = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        
+        // SỬA TẠI ĐÂY: Thêm "data/" vào trước tên file json
+        const jsonUrl = `${window.location.origin}${currentDir}data/songs.json`;
+        
+        console.log("Đang gọi file dữ liệu tại:", jsonUrl);
+
+        const res = await fetch(jsonUrl);
+        if (!res.ok) {
+            throw new Error(`Không thể tải file JSON. Mã lỗi hệ thống: ${res.status}`);
+        }
+        
+
+        const playlists = await res.json();
+        let foundSong = null;
+
+        // Vòng lặp duyệt qua cấu trúc mảng lồng nhau của bạn
+        for (const playlist of playlists) {
+            if (!playlist.songs) continue;
+            // Tìm bài hát có id trùng với targetId
+            const song = playlist.songs.find(s => s.id === targetId);
+            if (song) {
+                foundSong = song;
+                break;
+            }
+        }
+
+        if (foundSong) {
+            renderSongToUI(foundSong);
+        } else {
+            alert("Không tìm thấy ID bài hát này trong hệ thống!");
+            if (targetId !== DEFAULT_ID) {
+                loadSongById(DEFAULT_ID); // Quay về bài mặc định nếu lỗi ID
+            }
+        }
+    } catch (err) {
+        console.error("Lỗi đọc file JSON hoặc mất kết nối:", err);
+    }
+}
+
+
+// Xử lý sự kiện click nút chia sẻ link chứa ID động chính xác
+if (shareButton) {
+    shareButton.onclick = async (e) => {
+        e.stopPropagation();
+
+        if (!songData || !songData.id) {
+            alert("Vui lòng đợi bài hát tải xong!");
+            return;
+        }
+
+        // Tự động nhận diện thư mục hiện tại (ví dụ: /NewAerobic/) để tránh lỗi 404 tuyệt đối
+        const currentDir = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        const shareUrl = `${window.location.origin}${currentDir}file_music.html?songId=${songData.id}`;
+
+        try {
+            if (navigator.share) {
+                await navigator.share({
+                    title: songData.title,
+                    text: `Nghe bài hát ${songData.title} trên AeroBeat!`,
+                    url: shareUrl
+                });
+            } else {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(shareUrl);
+                } else {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = shareUrl;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(textArea);
+                }
+                alert(`📋 Đã sao chép link nghe nhạc thành công!\n${shareUrl}`);
+            }
+        } catch (err) {
+            if (err.name !== "AbortError") {
+                console.error("Lỗi thực thi chia sẻ:", err);
+            }
+        }
+    };
+}
+
+// Tiến hành bóc tách ID từ thanh địa chỉ URL khi vừa mở trang
+const urlParams = new URLSearchParams(window.location.search);
+const songIdFromUrl = urlParams.get("songId");
+
+if (songIdFromUrl) {
+    loadSongById(songIdFromUrl);
+} else {
+    loadSongById(DEFAULT_ID);
+}
+</script>
+</body>
+</html>
