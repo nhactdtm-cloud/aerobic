@@ -35,7 +35,7 @@ function play(input) {
       transform: translateX(-50%);
       width: 92%;
       max-width: 650px;
-      height: 76px;
+      height: 64px;
 
       background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(20px);
@@ -60,8 +60,8 @@ function play(input) {
       <!-- Khối bên trái: Ảnh bìa (HÌNH TRÒN) + Info -->
       <div style="display: flex; align-items: center; gap: 14px;">
         <img id="cover" style="
-          width: 48px;
-          height: 48px;
+          width: 40px;
+          height: 40px;
           border-radius: 50%; /* Đổi sang hình tròn */
           object-fit: cover;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -128,35 +128,43 @@ function play(input) {
 
       <!-- Khối bên phải: Nút điều khiển -->
       <div style="display: flex; align-items: center; gap: 20px;">
-        <button id="playBtn" style="
-          background: none;
-          border: none;
-          font-size: 22px;
-          color: #1c1c1e;
-          cursor: pointer;
-          width: 28px;
-          height: 28px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: transform 0.2s ease;
-          padding: 0;
-        " onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">▶</button>
+<button id="playBtn" style="
+  background:none;
+  border:none;
+  cursor:pointer;
+  width:28px;
+  height:28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+">
+<img id="playIcon"
+     src="assets/icons/pause.svg"
+     style="
+        width:22px;
+        height:22px;
+        display:block;
+        margin:auto;
+     ">
+</button>
 
-        <button id="nextBtn" style="
-          background: none;
-          border: none;
-          font-size: 22px;
-          color: #1c1c1e;
-          cursor: pointer;
-          width: 28px;
-          height: 28px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: transform 0.2s ease;
-          padding: 0;
-        " onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">⏭</button>
+<button id="nextBtn" style="
+  background:none;
+  border:none;
+  cursor:pointer;
+  width:28px;
+  height:28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+">
+    <img src="assets/icons/next-og.svg"
+         width="22"
+         height="22">
+</button>
+
       </div>
 
       <audio id="audio"></audio>
@@ -178,6 +186,7 @@ player.onclick = (e) => {
   const audio = document.getElementById("audio");
   const cover = document.getElementById("cover");
   const playBtn = document.getElementById("playBtn");
+  const playIcon = document.getElementById("playIcon");
   const nextBtn = document.getElementById("nextBtn");
 
   const title = document.getElementById("songTitle");
@@ -232,17 +241,15 @@ player.onclick = (e) => {
     cover.style.animationPlayState = "paused"; 
   } else {
     // Khi bấm chọn bài khác: Chủ động phát ngay
-    audio.play()
-      .then(() => {
-        playBtn.innerText = "⏸";
-        updateCoverAnimation();
-      })
-      .catch(error => {
-        console.log("Phát nhạc bị chặn:", error);
-        playBtn.innerText = "▶";
-        cover.style.animationPlayState = "paused";
-      });
-  }
+audio.play()
+.then(() => {
+    playIcon.src = "assets/icons/pause-og.svg";
+    updateCoverAnimation();
+})
+.catch(() => {
+    playIcon.src = "assets/icons/play-og.svg";
+});
+}
 
   // =========================
   // 4. UPDATE UI
@@ -252,11 +259,9 @@ player.onclick = (e) => {
   artist.innerText = song.artist || "Unknown Artist";
   
   // KIỂM TRA TRẠNG THÁI ĐỂ HIỆN NÚT CHÍNH XÁC:
-  if (audio.paused) {
-    playBtn.innerText = "▶"; // Nếu nhạc đang dừng (lúc vừa mở web) -> Hiện nút Play
-  } else {
-    playBtn.innerText = "⏸"; // Nếu nhạc đang phát -> Hiện nút Pause
-  }
+playIcon.src = audio.paused
+    ? "assets/icons/play-og.svg"
+    : "assets/icons/pause-og.svg";
   
 const displayTempo = song.currentTempo ?? song.tempo ?? song.bpm ?? "N/A";
 
@@ -265,11 +270,7 @@ songTempo.innerText =
     ? `Tempo: ${displayTempo.toFixed(1)} BPM`
     : `Tempo: ${displayTempo} BPM`;
 
-  audio.onloadedmetadata = () => {
-    const minutes = Math.floor(audio.duration / 60);
-    const seconds = Math.floor(audio.duration % 60).toString().padStart(2, '0');
-    songDuration.innerText = `${minutes}:${seconds}`;
-  };
+songDuration.innerText = song.duration || "--:--";
 
 
   // =========================
@@ -277,13 +278,13 @@ songTempo.innerText =
   // =========================
   if (isFirstLoad) {
     playBtn.onclick = () => {
-      if (audio.paused) {
-        audio.play();
-        playBtn.innerText = "⏸";
-      } else {
-        audio.pause();
-        playBtn.innerText = "▶";
-      }
+if (audio.paused) {
+    audio.play();
+    playIcon.src = "assets/icons/pause-og.svg";
+} else {
+    audio.pause();
+    playIcon.src = "assets/icons/play-og.svg";
+}
       updateCoverAnimation();
     };
 
@@ -384,178 +385,204 @@ if (!panel) {
 
         </div>
 
-        <!-- FOOTER: NÚT PLAYLIST & NÚT ĐÓNG DÀN HÀNG NGANG ĐÁY BOX -->
-        <div style="display:flex; gap:10px; width:100%;">
-          <button id="playlistBtn" style="flex: 1;">
-            ➕ Thêm vào bộ sưu tập
-          </button>
-          <button id="closePanel" style="width: 100px; background:#e2dfd9; color:#212121; font-weight:700; border:none; border-radius:12px; cursor:pointer;">
-             ❌
-          </button>
-        </div>
+<!-- Nút Đóng thiết kế dạng bo tròn tinh tế nằm ở góc trên panel -->
+<button id="closePanel" class="close-btn">✕</button>
+
+<!-- FOOTER: CHỈ CÒN LẠI NÚT PLAYLIST TRẢI DÀI TOÀN BỘ CHIỀU NGANG -->
+<div class="bottom-actions-row">
+  <button id="playlistBtn" class="add-btn">
+    ➕ Thêm vào bộ sưu tập
+  </button>
+</div>
+
 
       </div>
     `;
 
     // Thiết lập khung ngoài ôm trọn không gian (max-width lớn hơn để tràn màn hình)
-    panel.style.cssText = `
-      position:fixed;
-      left:50%;
-      transform:translateX(-50%);
-      bottom:20px;
-      width:94%;
-      max-width:850px;
-      height:215px;
+panel.style.cssText = `
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 24px;
+  width: 94%;
+  max-width: 850px;
+  height: auto; 
+  min-height: 220px;
 
-      background:#FDFBF7;
-      border:2px solid #1E4233;
-      border-radius:24px;
+  /* LÀM MỜ PHÍA SAU: Tăng độ trong suốt của nền (0.95 -> 0.75) để thấy rõ hiệu ứng blur */
+  background: rgba(253, 251, 247, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  
+  border: 1px solid rgba(30, 66, 51, 0.15);
+  border-radius: 28px;
 
-      display:none;
-      padding:12px;
-      box-sizing:border-box;
-      z-index:99999;
-      box-shadow:0 14px 36px rgba(30,66,51,0.15);
-      font-family:system-ui, -apple-system, sans-serif;
-    `;
+  display: none;
+  padding: 16px;
+  box-sizing: border-box;
+  z-index: 99999;
+  box-shadow: 0 20px 40px rgba(30, 66, 51, 0.12);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+`;
 
-    panel.querySelector(".cp-box").style.cssText = `
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      height:100%;
-      width:100%;
-      overflow:hidden; /* Ngăn chặn hoàn toàn tràn box */
-    `;
+panel.querySelector(".cp-box").style.cssText = `
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+`;
 
-    // CSS Engine để dựng bố cục 3 vùng thông minh trải dài lấp khoảng trống
-    const styleSheet = document.createElement("style");
-    styleSheet.innerText = `
-      #controlPanel .cp-title,
-      #controlPanel .cp-artist {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: block; /* Đảm bảo thuộc tính ẩn chữ hoạt động */
-        width: 100%;
-      }
+// CSS Engine chuẩn hóa toàn bộ giao diện và chống lụt nút
+const styleSheet = document.createElement("style");
+styleSheet.innerText = `
+  #controlPanel .cp-title,
+  #controlPanel .cp-artist {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    width: 100%;
+  }
 
-      #controlPanel .cp-title {
-        font-size: 16px;
-        font-weight: bold;
-        color: #212121;
-      }
+  #controlPanel .cp-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1E4233;
+    letter-spacing: -0.3px;
+  }
 
-      #controlPanel .cp-artist {
-        font-size: 13px;
-        color: #6b7280;
-        margin-top: 2px;
-      }
+  #controlPanel .cp-artist {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6e7a74;
+    margin-top: 3px;
+  }
 
-      #controlPanel .cp-sub-box {
-        min-width: 0;
-      }
+  #controlPanel .cp-sub-box {
+    min-width: 0;
+  }
 
-      #controlPanel .cp-time-row {
-        display:flex;
-        justify-content:space-between;
-        font-size:11px;
-        color:#6b7280;
-        font-family:monospace;
-        margin-top:4px;
-      }
+  #controlPanel .cp-time-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #6e7a74;
+    font-family: "SF Mono", SFMono-Regular, Consolas, monospace;
+    font-weight: 500;
+    margin-top: 6px;
+  }
 
-      #controlPanel .cp-main-layout {
-        display: flex;
-        gap: 10px;
-        flex: 1;
-        min-width: 0; /* Ép flex layout không phình to quá cha */
-      }
-      #controlPanel .section-right-controls {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-      #controlPanel .cp-sub-box {
-        background: #ffffff;
-        border: 1px solid rgba(30, 66, 51, 0.12);
-        border-radius: 14px;
-        padding: 10px 14px;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-      /* Định dạng cột hiển thị số liệu tương tác */
-      #controlPanel .section-stats {
-        align-items: flex-start;
-        justify-content: center;
-        gap: 4px;
-      }
-      #controlPanel .stat-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        width: 100%;
-      }
-      #controlPanel .stat-label {
-        font-size: 10px;
-        color: #777;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-      #controlPanel .stat-value {
-        font-size: 13px;
-        font-weight: 700;
-        color: #212121;
-        font-family: monospace;
-      }
-      #controlPanel .cp-badge-val {
-        font-family: monospace;
-        font-weight: 700;
-        color: #1E4233;
-        background: rgba(30, 66, 51, 0.08);
-        padding: 1px 6px;
-        border-radius: 4px;
-        font-size: 11px;
-      }
-      #controlPanel #playlistBtn {
-        padding: 11px;
-        border-radius: 12px;
-        border: none;
-        background: #1E4233;
-        color: #FDFBF7;
-        font-weight: 700;
-        font-size: 13px;
-        cursor: pointer;
-        box-shadow: 0 3px 0 #12291f;
-      }
-      #controlPanel #playlistBtn:active {
-        transform: translateY(1px);
-        box-shadow: 0 2px 0 #12291f;
-      }
-      /* Custom Sliders */
-      #controlPanel input[type="range"] {
-        -webkit-appearance: none;
-        width: 100%;
-        height: 4px;
-        background: #e2dfd9;
-        border-radius: 999px;
-        outline: none;
-        margin: 4px 0;
-      }
-      #controlPanel input[type="range"]::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background: #1E4233;
-        cursor: pointer;
-      }
-      #controlPanel #tempoBar::-webkit-slider-thumb {
-        background: #C84B31;
-      }
-    `;
+  #controlPanel .cp-main-layout {
+    display: flex;
+    gap: 14px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Ép 2 khối thông tin nhạc và sliders đều nhau không phình to */
+  #controlPanel .cp-main-layout > div {
+    flex: 1;
+    min-width: 0;
+  }
+
+  #controlPanel .section-right-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  #controlPanel .cp-sub-box {
+    background: #ffffff;
+    border: 1px solid rgba(30, 66, 51, 0.08);
+    border-radius: 18px;
+    padding: 12px 16px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(30, 66, 51, 0.02);
+  }
+
+  /* --- ĐỊNH DẠNG HÀNG NÚT DƯỚI CÙNG (ĐÃ SỬA LỖI TƯƠNG PHẢN & BỐ CỤC) --- */
+  #controlPanel .bottom-actions-row { 
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-top: auto; 
+  }
+
+  /* Thao tác nút Thêm vào bộ sưu tập */
+  #controlPanel .bottom-actions-row .add-btn { 
+    flex: 1;
+    height: 44px;
+    border-radius: 14px;
+    background: #1E4233;
+    color: #FDFBF7;
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.2s ease;
+  }
+  #controlPanel .bottom-actions-row .add-btn:hover { background: #275441; }
+
+  /* Thao tác nút Đóng X (Sửa màu sắc dịu mắt, hòa hợp tổng thể) */
+  #controlPanel .bottom-actions-row .close-btn {
+    width: 50px;
+    height: 44px;
+    border-radius: 14px;
+    background: rgba(30, 66, 51, 0.08); /* Đổi sang nền rêu nhạt trong suốt nhẹ */
+    color: #1E4233; /* Chữ màu rêu đậm đồng bộ hệ thống */
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+  
+  /* Khi di chuột vào nút đóng mới hiện màu đỏ cam cảnh báo */
+  #controlPanel .bottom-actions-row .close-btn:hover { 
+    background: #C84B31; 
+    color: #ffffff;
+  }
+
+  /* Sliders mượt mà */
+  #controlPanel input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 5px;
+    background: #eae7e1;
+    border-radius: 999px;
+    outline: none;
+    margin: 6px 0;
+  }
+
+  #controlPanel input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #1E4233;
+    cursor: pointer;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+
+  #controlPanel #tempoBar::-webkit-slider-thumb {
+    background: #C84B31;
+  }
+`;
+
+
     document.head.appendChild(styleSheet);
     document.body.appendChild(panel);
 
