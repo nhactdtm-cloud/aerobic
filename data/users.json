@@ -83,6 +83,23 @@
       "avatar": "",
       "createdAt": "2026-06-25",
       "pinnedPlaylistIds": []
+    },
+    {
+      "id": "u_1783440650739",
+      "fullName": "",
+      "username": "nhactdtm@gmail.com",
+      "password": "112121211221121",
+      "birthday": {
+        "day": "",
+        "month": "",
+        "year": ""
+      },
+      "gender": "",
+      "email": "",
+      "avatar": "",
+      "createdAt": "2026-07-07",
+      "registerPro": "",
+      "pinnedPlaylistIds": []
     }
   ]
 }
